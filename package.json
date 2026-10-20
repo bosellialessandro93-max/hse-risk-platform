@@ -1,6 +1,6 @@
 {
   "name": "hse-risk-platform",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Piattaforma aziendale",
   "main": "index.js",
   "directories": {
@@ -8,7 +8,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "npm run test:model && npm run test:integration && npm run test:browser && npm run test:ocr && npm run test:workflows && npm run test:risk-browser && npm run test:meeting && npm run test:navigation",
+    "test": "npm run test:model && npm run test:integration && npm run test:browser && npm run test:ocr && npm run test:workflows && npm run test:risk-browser && npm run test:meeting && npm run test:navigation && npm run test:redesign",
     "build": "node tools/build.mjs",
     "test:browser": "node tests/browser.mjs",
     "test:ocr": "node tests/ocr.mjs",
@@ -17,7 +17,8 @@
     "test:model": "python tests/model_parity.py",
     "test:risk-browser": "node tests/risk-browser.mjs",
     "test:meeting": "node tests/meeting-evidence.mjs",
-    "test:navigation": "node tests/navigation.mjs"
+    "test:navigation": "node tests/navigation.mjs",
+    "test:redesign": "bash tools/test-redesign.sh"
   },
   "repository": {
     "type": "git",

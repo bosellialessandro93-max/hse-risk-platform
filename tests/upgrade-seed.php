@@ -1,0 +1,6 @@
+<?php
+/** Add a real synthetic private image on the local previous-release site. */
+require (getenv('HSE_QA_ROOT')?:'/var/www/hse-zip-021').'/wp-load.php';wp_set_current_user(1);
+if(HSE_VERSION!==(getenv('HSE_EXPECT_PLUGIN')?:'0.2.1'))throw new RuntimeException('Expected previous release');$site=HSE_Store::list('sites')[0];$file='/tmp/hse-fixtures/photo.png';
+$r=new WP_REST_Request('POST','/hse/v1/assets');$r->set_body_params(['site_id'=>$site['id'],'request_id'=>wp_generate_uuid4()]);$r->set_file_params(['file'=>['name'=>'upgrade-private.png','type'=>'image/png','tmp_name'=>$file,'error'=>0,'size'=>filesize($file)]]);$res=rest_do_request($r);if($res->get_status()!==200)throw new RuntimeException('Synthetic image upload failed');$asset=$res->get_data()['data'];
+$r=new WP_REST_Request('POST','/hse/v1/observations');$r->set_header('Content-Type','application/json');$r->set_body(wp_json_encode(['site_id'=>$site['id'],'note'=>'DEMO conservazione foto aggiornamento','attachments'=>[$asset['id']],'request_id'=>wp_generate_uuid4()]));$res=rest_do_request($r);if($res->get_status()!==200)throw new RuntimeException('Synthetic attachment link failed');echo 'PASS real private binary asset and linked observation created on 0.2.1'.PHP_EOL;

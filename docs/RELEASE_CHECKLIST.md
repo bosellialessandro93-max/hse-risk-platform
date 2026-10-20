@@ -8,7 +8,7 @@ Questa è una checklist di verifiche ancora da eseguire, non un esito positivo.
 - [ ] Prove su iOS/Safari e Android/Chrome reali; almeno cinque utilizzatori, attività richieste entro 60 secondi, errori registrati.
 - [ ] Aprire e rivedere tutti i template finali in Word/Excel/PowerPoint e lettore PDF; verificare leggibilità di tabelle lunghe, appendici, KPI, accessibilità dei file e corrispondenza PPTX/PDF.
 - [ ] Con Elementor effettivamente installato, inserire shortcode, verificare stessa UI/dati e permanenza delle funzioni dopo disattivazione.
-- [ ] Su AlterVista: confermare plugin personalizzati, versioni PHP/WordPress, InnoDB, ZIP/XML/fileinfo/mbstring/GD, HTTPS, memoria, upload/post_max_size, max_execution_time e storage database per foto riservate.
+- [ ] Su AlterVista: confermare plugin personalizzati, versioni PHP/WordPress, InnoDB, mysqli/ZIP/XML/fileinfo/mbstring (GD facoltativa per il plugin), HTTPS, memoria, upload/post_max_size, max_execution_time e storage database per foto riservate.
 - [ ] Su hosting: verificare esclusioni cache anche con REST in query string, mancata indicizzazione, cookie autenticati, file negati da account senza assegnazione, upload interrotti e retry.
 - [ ] Backup completo e ripristino su una nuova installazione staging; conservazione dati/revisioni dopo aggiornamento/disinstallazione.
 - [ ] Revisione dei modelli toolbox/checklist da parte dell'HSE; nessuna qualificazione normativa dei simboli personalizzati.
@@ -23,3 +23,5 @@ Questa è una checklist di verifiche ancora da eseguire, non un esito positivo.
 - [ ] HTTPS, cache privata/REST esclusa, worker/WASM/font locali e limiti di esecuzione sul piano reale.
 
 La verifica di PHP 8.0.30 non certifica automaticamente tali impostazioni del piano AlterVista.
+
+- [ ] Su René/AlterVista verificare il template **HSE Platform · applicazione a pagina intera**, login, risorse, layout, cache e rollback in staging; nessuna impostazione di produzione è stata cambiata dal redesign.

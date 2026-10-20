@@ -1,0 +1,2 @@
+/* Enqueued only for the explicitly selected HSE page template. */
+body.hse-app-page{margin:0;background:#f2f5fa;color:#17263d;font-family:system-ui,sans-serif}body.hse-app-page .hse-app-canvas{width:100%;max-width:none;margin:0;padding:0}body.hse-app-page .hse-platform{width:100%;max-width:1920px;margin:auto;border-radius:0}body.hse-app-page #wpadminbar{position:fixed}body.hse-app-page .hse-login{min-height:85vh;display:grid;place-content:center;padding:24px}body.hse-app-page .hse-login a{color:#1759cc}body.hse-app-page .hse-app-canvas>.hse-platform{margin-inline:auto}

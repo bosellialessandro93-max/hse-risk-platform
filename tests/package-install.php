@@ -1,6 +1,6 @@
 <?php
 require_once (getenv('HSE_QA_ROOT')?:'/var/www/html').'/wp-load.php';require_once ABSPATH.'wp-admin/includes/plugin.php';wp_set_current_user(1);
-if(HSE_VERSION!=='0.2.1'||is_plugin_active('elementor/elementor.php'))throw new RuntimeException('Unexpected package environment');
+if(HSE_VERSION!=='0.3.0'||is_plugin_active('elementor/elementor.php'))throw new RuntimeException('Unexpected package environment');
 $shortcode=do_shortcode('[hse_platform]');if(!str_contains($shortcode,'id="hse-platform"'))throw new RuntimeException('Shortcode missing');
 foreach(['Wind','Solar','BESS'] as $tech){$site=HSE_Store::save('sites',HSE_Domain::validate('sites',['name'=>'DEMO ZIP '.$tech,'technology'=>$tech]));$record=['site_id'=>$site['id'],'month'=>'2026-09','phase'=>'costruzione','activities'=>[$tech==='Wind'?'lavori in quota':($tech==='Solar'?'elettrici':'hot work')],'contractors'=>1,'subcontractors'=>0,'interference'=>3,'coverage'=>80,'inspections'=>0];$calculated=HSE_Risk::evaluate($record);if($calculated['result']['base']<0||$calculated['result']['base']>100)throw new RuntimeException('Model invalid');$calculated['status']='Saved';$saved=HSE_Store::save('assessments',$calculated);$snapshot=$saved['result'];deactivate_plugins('hse-risk-platform/hse-risk-platform.php');$result=activate_plugin('hse-risk-platform/hse-risk-platform.php');if(is_wp_error($result)||HSE_Store::get($saved['id'])['result']!=$snapshot)throw new RuntimeException('Activation lost records');}
-echo 'PASS ZIP 0.2.1 senza Elementor: shortcode autenticato, Wind/Solar/BESS, calcolo e conservazione dopo riattivazione'.PHP_EOL;
+echo 'PASS ZIP 0.3.0 senza Elementor: shortcode autenticato, Wind/Solar/BESS, calcolo e conservazione dopo riattivazione'.PHP_EOL;

@@ -80,3 +80,8 @@ Specifica 1.2. Completato indica funzione implementata con verifiche automatiche
 | RF-74 | Entità comuni | hse-risk-platform/includes/store.php; includes/api.php; docs/; tools/package.py | tests/integration.php | Completato | ID, relazioni, revisioni, UTC, conflitti, idempotenza, ripristino; snapshot export con digest dei dati sorgenti. |
 | RF-75 | Percorso di implementazione | hse-risk-platform/includes/store.php; includes/api.php; docs/; tools/package.py | docs/RELEASE_CHECKLIST.md; tools/package.py | Parziale | Percorso completato sul plugin esistente, incluso motore; gate esterni di collaudo ancora aperti. |
 | RF-76 | Definition of Done | hse-risk-platform/includes/store.php; includes/api.php; docs/; tools/package.py | docs/RELEASE_CHECKLIST.md; tools/package.py | Parziale | Codice e ZIP installabile pronti; DoD complessiva resta subordinata ai gate reali di RF-56/59 e accessibilità. |
+
+
+## Redesign 0.3.0 — 20/10/2026
+
+Implementati dashboard Wind/Solar/BESS, elenco cantieri, sistema visivo condiviso, navigazione responsive, wizard con progressione, KPI/export, template WordPress a pagina intera selezionabile e illustrazioni SVG originali. Motore 2.0.0, API, schema 1 e autorizzazioni invariati. Il plugin non modifica il sito di produzione o le impostazioni del tema. Esiti e limiti del collaudo in `docs/REDESIGN_0_3_0.md`; le evidenze delle versioni precedenti restano storiche.

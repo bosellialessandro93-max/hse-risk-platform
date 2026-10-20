@@ -10,4 +10,4 @@ HSE_TEST_CONTAINER=hse-wp-php80 HSE_EXPECT_PHP=8.0.30 HSE_TEST_URL=http://127.0.
 python tests/validate_exports.py
 python tools/package.py
 bash tools/php80/test-package.sh
-HSE_TEST_PACKAGE_FILE="$PWD/dist/hse-risk-platform-0.2.1.zip" node tests/php80-web.mjs
+HSE_TEST_PACKAGE_FILE="$PWD/dist/hse-risk-platform-0.3.0.zip" node tests/php80-web.mjs

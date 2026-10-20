@@ -1,0 +1,163 @@
+{
+  "plugin": "0.3.0",
+  "php": "8.0.30",
+  "wordpress": "7.1.3",
+  "model": "2.0.0",
+  "schema": "1",
+  "full_npm_suite": "passed (9 groups)",
+  "model_parity_cases": 357,
+  "independent_scenarios": 2142,
+  "backend_checks": 56,
+  "redesign_checks": 13,
+  "responsive_widths": [
+    320,
+    375,
+    768,
+    1024,
+    1440,
+    1920
+  ],
+  "text_enlargement": "200%",
+  "roles": [
+    "administrator",
+    "manager",
+    "reader",
+    "company"
+  ],
+  "export_validation": "passed",
+  "engine_api_schema_catalog_exports_source": "unchanged from fe02a05",
+  "release_package_checks": "See repository report updated after ZIP sealing",
+  "evidence": {
+    "axe.json": [
+      {
+        "width": 320,
+        "violations": []
+      },
+      {
+        "width": 375,
+        "violations": []
+      },
+      {
+        "width": 768,
+        "violations": []
+      },
+      {
+        "width": 1024,
+        "violations": []
+      },
+      {
+        "width": 1440,
+        "violations": []
+      }
+    ],
+    "axe-risk.json": [
+      {
+        "width": 320,
+        "violations": []
+      },
+      {
+        "width": 375,
+        "violations": []
+      },
+      {
+        "width": 768,
+        "violations": []
+      },
+      {
+        "width": 1024,
+        "violations": []
+      },
+      {
+        "width": 1440,
+        "violations": []
+      }
+    ],
+    "axe-navigation.json": [
+      {
+        "width": 375,
+        "height": 900,
+        "violations": []
+      },
+      {
+        "width": 900,
+        "height": 375,
+        "violations": []
+      },
+      {
+        "width": 1440,
+        "height": 900,
+        "violations": []
+      }
+    ],
+    "redesign.json": {
+      "checks": [
+        {
+          "label": "dashboard-320",
+          "violations": []
+        },
+        {
+          "label": "dashboard-375",
+          "violations": []
+        },
+        {
+          "label": "dashboard-768",
+          "violations": []
+        },
+        {
+          "label": "dashboard-1024",
+          "violations": []
+        },
+        {
+          "label": "dashboard-1440",
+          "violations": []
+        },
+        {
+          "label": "dashboard-1920",
+          "violations": []
+        },
+        {
+          "label": "cantieri",
+          "violations": []
+        },
+        {
+          "label": "wizard-nc",
+          "violations": []
+        },
+        {
+          "label": "risultati",
+          "violations": []
+        },
+        {
+          "label": "testo-200-percento",
+          "violations": []
+        },
+        {
+          "label": "ruolo-manager",
+          "violations": []
+        },
+        {
+          "label": "ruolo-reader",
+          "violations": []
+        },
+        {
+          "label": "ruolo-company",
+          "violations": []
+        }
+      ],
+      "js_errors": [],
+      "roles": [
+        "admin",
+        "manager",
+        "reader",
+        "company"
+      ],
+      "anonymous_login": true,
+      "template": true
+    }
+  },
+  "limitations": [
+    "Remote AlterVista/actual René theme blocked by proxy CONNECT 403",
+    "Elementor not installed in test environment",
+    "No WCAG certification, real screen reader/mobile/manual user validation remains"
+  ]
+}

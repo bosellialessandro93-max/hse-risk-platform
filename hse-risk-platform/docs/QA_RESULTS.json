@@ -43,5 +43,9 @@
     "authenticated HTTP REST"
   ],
   "missing_zip_negative_test": "passed; explicit error and records unchanged",
-  "production_deployment": false
+  "production_deployment": false,
+  "http_zip_upload_verified": true,
+  "http_zip_upload_php": "8.0.30",
+  "zip_sha256": "cd8a6b31ca896a6e2c3813d4820a7cde236d6de097c5ba5654771cee9b1e90e7",
+  "zip_bytes": 20823553
 }

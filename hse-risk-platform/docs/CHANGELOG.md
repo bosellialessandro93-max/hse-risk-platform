@@ -1,3 +1,12 @@
+# 0.3.0 — redesign UX/UI, 20/10/2026
+
+- Design system navy/blu/teal, dashboard e cantieri con tre SVG originali, sidebar desktop/menu mobile, breadcrumb e form guidato con progressione e navigazione.
+- KPI dei risultati ed esportazioni evidenti; aiuti NC/detection e logiche esistenti conservati.
+- Template WordPress a pagina intera opzionale, senza cambiare tema o homepage.
+- Focus, skip link, reduced motion, indicatori di attività; protezione dalle risposte di schermate precedenti e selezione persistente del cantiere creato.
+- Nessuna modifica a motore 2.0.0, API, schema 1, cataloghi, autorizzazioni o generatori degli export. PHP minimo 8.0.30.
+- Esiti e limiti: REDESIGN_0_3_0.md e REDESIGN_QA.json.
+
 # 0.2.1 — compatibilità PHP 8.0.30
 
 - Requisito PHP corretto a 8.0.30 dopo verifica reale, non per sola modifica del metadato.

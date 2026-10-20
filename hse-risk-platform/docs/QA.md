@@ -39,3 +39,5 @@ Installazione su nuovo WordPress/database con prefisso `avtest_`: la vecchia 0.2
 Sono rimasti invariati byte per byte motore/cataloghi e bundle JavaScript. Gli otto file sono parsati e le 107 funzioni globali verificate con il bootstrap WordPress corretto. Dettagli: PHP80_COMPATIBILITY.md.
 
 L’ambiente offline genera avvisi dei controlli aggiornamenti WordPress.org bloccati dalla rete/configurazione del test; non sono errori del motore o degli endpoint del plugin. Servizi di aggiornamento esterni, hosting AlterVista reale e gli altri gate della checklist non sono stati certificati.
+
+Il pacchetto finale 0.2.1 è stato anche caricato/sostituito dall’amministrazione WordPress via browser su PHP 8.0.30: esito positivo, plugin attivo e REST funzionante dopo il caricamento. Hash e dimensione finali sono nel QA_RESULTS.json del repository.

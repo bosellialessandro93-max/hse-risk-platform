@@ -2,14 +2,14 @@
 /**
  * Plugin Name: HSE Risk Platform
  * Description: Workspace HSE autonomo: cantieri, valutazioni, sinottici, coordinamento e mappe.
- * Version: 0.2.1
+ * Version: 0.3.0
  * Requires at least: 6.6
  * Requires PHP: 8.0.30
  * License: GPL-2.0-or-later
  * Text Domain: hse-risk-platform
  */
 if (!defined('ABSPATH')) exit;
-define('HSE_VERSION', '0.2.1');
+define('HSE_VERSION', '0.3.0');
 define('HSE_DIR', __DIR__);
 require_once __DIR__.'/includes/store.php';
 require_once __DIR__.'/includes/domain.php';
@@ -27,7 +27,7 @@ add_action('template_redirect', function(){
 });
 add_action('wp_enqueue_scripts',function(){if(is_singular() && has_shortcode(get_post()->post_content??'', 'hse_platform'))wp_enqueue_style('hse-platform',plugins_url('assets/app.css',__FILE__),[],HSE_VERSION);});
 add_shortcode('hse_platform', function(){
- if(!is_user_logged_in()) return '<p>Accedi con il tuo account WordPress: <a href="'.esc_url(wp_login_url(get_permalink())).'">Accedi</a></p>';
+ if(!is_user_logged_in()) return '<main class="hse-login"><h1>HSE Risk Platform</h1><p>Accedi con il tuo account WordPress: <a href="'.esc_url(wp_login_url(get_permalink())).'">Accedi</a></p></main>';
  wp_enqueue_style('hse-platform',plugins_url('assets/app.css',__FILE__),[],HSE_VERSION);
  wp_enqueue_script('hse-platform',plugins_url('assets/app.bundle.js',__FILE__),[],HSE_VERSION,true);
  wp_add_inline_script('hse-platform','window.HSE_CONFIG='.wp_json_encode(['api'=>rest_url('hse/v1/'),'nonce'=>wp_create_nonce('wp_rest'),'assets'=>plugins_url('assets/',__FILE__),'admin'=>current_user_can('manage_options'),'user'=>get_current_user_id()]).';','before');
@@ -39,3 +39,16 @@ add_action('elementor/widgets/register',function($manager){
  require_once HSE_DIR.'/includes/elementor.php';
  $manager->register(new HSE_Elementor_Widget());
 });
+
+// Opt-in page template. No theme settings, homepage or production data are changed.
+add_filter('theme_page_templates', function($templates){
+ $templates['hse-platform-full-width.php']='HSE Platform · applicazione a pagina intera';
+ return $templates;
+});
+add_filter('template_include', function($template){
+ if(is_page() && get_page_template_slug()==='hse-platform-full-width.php') return HSE_DIR.'/templates/platform.php';
+ return $template;
+}, 99);
+add_action('wp_enqueue_scripts', function(){
+ if(is_page() && get_page_template_slug()==='hse-platform-full-width.php') wp_enqueue_style('hse-standalone',plugins_url('assets/standalone.css',__FILE__),[],HSE_VERSION);
+}, 99);

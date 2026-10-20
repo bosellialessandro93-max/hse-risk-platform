@@ -35,3 +35,7 @@ Gli artefatti locali sono in `tests/artifacts`; il riepilogo verifiche è in `do
 Dell’hosting effettivo è nota la versione PHP 8.0.30 comunicata dall’utente. Non sono stati verificati da remoto WordPress ≥6.6, estensioni/permessi del database, InnoDB, memoria/upload/post, max_allowed_packet/spazio per gli allegati grandi, HTTPS, cache, worker/WASM e timeout. Per un ZIP di circa 21 MB servono limiti adeguati (upload 32 MB/post 48 MB consigliati); in alternativa usare gestore file/FTP se consentito e poi attivare da WordPress. I test non attestano tutti i caricamenti al limite massimo sul piano reale.
 
 Restano anche i precedenti collaudi esterni: Elementor reale, iOS/Android fisici, 20 sinottici rappresentativi, cinque utilizzatori e audit manuali di accessibilità/file Office. Il downgrade del requisito dichiarato non risolve né certifica automaticamente questi gate.
+
+## Verifica del pacchetto finale dopo confezionamento
+
+Il file `dist/hse-risk-platform-0.2.1.zip` è stato caricato e sostituito dall’amministrazione WordPress via HTTP su PHP 8.0.30, poi verificato attivo con login, shortcode e creazione/modifica REST. SHA-256: `cd8a6b31ca896a6e2c3813d4820a7cde236d6de097c5ba5654771cee9b1e90e7`. Questa evidenza successiva al confezionamento è registrata nel repository; non richiede di ricompilare il bundle o modificare il pacchetto verificato.
