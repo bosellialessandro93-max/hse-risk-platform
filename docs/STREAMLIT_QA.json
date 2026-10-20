@@ -206,5 +206,6 @@
     "Dedicated persistent external MySQL/MariaDB with InnoDB and TLS",
     "Community Cloud Secrets: database and hse_auth; auth section for optional OIDC"
   ],
-  "temporary_files_are_not_archive": true
+  "temporary_files_are_not_archive": true,
+  "native_site_creation_ui": true
 }
