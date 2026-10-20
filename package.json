@@ -1,0 +1,54 @@
+{
+  "name": "hse-risk-platform",
+  "version": "0.2.0",
+  "description": "Piattaforma aziendale",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "npm run test:model && npm run test:integration && npm run test:browser && npm run test:ocr && npm run test:workflows && npm run test:risk-browser && npm run test:meeting && npm run test:navigation",
+    "build": "node tools/build.mjs",
+    "test:browser": "node tests/browser.mjs",
+    "test:ocr": "node tests/ocr.mjs",
+    "test:integration": "bash tools/test-integration.sh",
+    "test:workflows": "node tests/workflows.mjs",
+    "test:model": "python tests/model_parity.py",
+    "test:risk-browser": "node tests/risk-browser.mjs",
+    "test:meeting": "node tests/meeting-evidence.mjs",
+    "test:navigation": "node tests/navigation.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bosellialessandro93-max/hse-risk-platform.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "GPL-2.0-or-later",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/bosellialessandro93-max/hse-risk-platform/issues"
+  },
+  "homepage": "https://github.com/bosellialessandro93-max/hse-risk-platform#readme",
+  "dependencies": {
+    "@pdf-lib/fontkit": "1.1.1",
+    "@tesseract.js-data/ita": "1.0.0",
+    "docx": "9.5.1",
+    "esbuild": "0.25.12",
+    "exceljs": "4.4.0",
+    "pdf-lib": "1.17.1",
+    "pdfjs-dist": "4.10.38",
+    "pptxgenjs": "4.0.1",
+    "tesseract.js": "6.0.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.10.2",
+    "@playwright/test": "1.56.1"
+  },
+  "overrides": {
+    "image-size": "2.0.3",
+    "uuid": "11.1.1"
+  },
+  "private": true
+}

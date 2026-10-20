@@ -1,0 +1,95 @@
+{
+  "MODEL_VERSION": "2.0.0",
+  "WEIGHTS": {
+    "NC formali": 30,
+    "Criticità informali": 8,
+    "Attività": 22,
+    "Interferenze": 15,
+    "Organizzazione": 10,
+    "Presidio e controlli": 15
+  },
+  "ACTIVITY_THEME": {
+    "elettrici": "elettrico",
+    "scavi": "scavi",
+    "lavori in quota": "quota",
+    "sollevamenti": "sollevamento",
+    "spazi confinati": "spazi confinati",
+    "hot work": "incendio",
+    "movimentazione mezzi": "viabilità",
+    "civili": "ordine e pulizia",
+    "meccanici": "dpi",
+    "altro": "altro"
+  },
+  "PHASE_THEMES": {
+    "cantierizzazione": [
+      "scavi",
+      "viabilità",
+      "ordine e pulizia"
+    ],
+    "costruzione": [
+      "quota",
+      "sollevamento",
+      "dpi"
+    ],
+    "commissioning": [
+      "elettrico",
+      "incendio",
+      "dpi"
+    ],
+    "punch list": [
+      "elettrico",
+      "quota",
+      "ordine e pulizia"
+    ]
+  },
+  "STATUS": {
+    "Aperta": 1.0,
+    "Chiusa nei tempi": 0.2,
+    "Chiusa in ritardo": 0.4
+  },
+  "SEVERITY": {
+    "bassa": 1.0,
+    "media": 2.5,
+    "alta": 5.0
+  },
+  "ACTIVITY": {
+    "elettrici": 80,
+    "scavi": 75,
+    "lavori in quota": 85,
+    "sollevamenti": 80,
+    "spazi confinati": 95,
+    "hot work": 75,
+    "movimentazione mezzi": 55,
+    "civili": 35,
+    "meccanici": 45,
+    "altro": 40
+  },
+  "THEMES": [
+    "elettrico",
+    "scavi",
+    "quota",
+    "sollevamento",
+    "spazi confinati",
+    "incendio",
+    "viabilità",
+    "dpi",
+    "ordine e pulizia",
+    "documentale",
+    "ambientale",
+    "altro"
+  ],
+  "THEME_FACTOR": {
+    "elettrico": 1.2,
+    "scavi": 1.2,
+    "quota": 1.15,
+    "sollevamento": 1.15,
+    "spazi confinati": 1.25,
+    "incendio": 1.15,
+    "viabilità": 1.05,
+    "dpi": 0.85,
+    "ordine e pulizia": 0.7,
+    "documentale": 0.65,
+    "ambientale": 1.0,
+    "altro": 0.85
+  }
+}

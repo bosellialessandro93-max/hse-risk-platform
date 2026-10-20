@@ -1,0 +1,110 @@
+{
+  "elettrico": [
+    "Contatti elettrici, arco elettrico e riattivazione inattesa",
+    [
+      "Verificare stato dell’impianto, confini dell’area e responsabili operativi prima di iniziare.",
+      "Applicare la procedura di messa in sicurezza prevista e verificare le condizioni per la consegna del lavoro.",
+      "Controllare utensili, DPI previsti e separazione dalle parti che restano in servizio."
+    ],
+    "Chi conferma le condizioni di sicurezza e cosa fate se lo stato dell’impianto cambia?"
+  ],
+  "scavi": [
+    "Intercettazione sottoservizi, cedimenti e accessi allo scavo",
+    [
+      "Confrontare rilievi, elaborati e condizioni reali; chiarire i sottoservizi prima dello scavo.",
+      "Verificare stabilità, protezioni dei bordi, accessi e distanza di mezzi/materiali secondo il piano operativo.",
+      "Fermare la lavorazione in caso di sottoservizio inatteso o variazione delle condizioni."
+    ],
+    "Come riconoscete un sottoservizio non censito e chi autorizza la ripresa?"
+  ],
+  "quota": [
+    "Caduta dall’alto e caduta di materiali",
+    [
+      "Verificare accessi e protezioni collettive previste; controllare integrità e corretto utilizzo.",
+      "Dove previsti, verificare sistemi anticaduta, compatibilità e piano di recupero.",
+      "Delimitare le aree sottostanti e controllare vento e altre condizioni meteo."
+    ],
+    "Come viene recuperata una persona sospesa e chi attiva il piano?"
+  ],
+  "sollevamento": [
+    "Carichi sospesi, interferenze e stabilità del mezzo",
+    [
+      "Condividere piano di sollevamento, ruoli, segnali e confini dell’area.",
+      "Verificare accessori, portata nella configurazione reale, appoggi e condizioni meteo.",
+      "Impedire presenza di persone sotto carichi e nell’area di movimento."
+    ],
+    "Qual è il segnale di arresto e chi lo può impartire?"
+  ],
+  "spazi confinati": [
+    "Atmosfere pericolose, accesso e soccorso",
+    [
+      "Identificare e valutare l’ambiente prima dell’accesso; applicare la procedura dedicata.",
+      "Verificare isolamento, monitoraggi, ventilazione, comunicazioni e presidio esterno previsti.",
+      "Controllare organizzazione e mezzi di recupero; non improvvisare ingressi di soccorso."
+    ],
+    "Quali condizioni impediscono l’accesso e come viene attivato il recupero?"
+  ],
+  "incendio": [
+    "Innesco, propagazione e gestione emergenze",
+    [
+      "Verificare materiali combustibili, fonti d’innesco e autorizzazioni operative previste.",
+      "Identificare allarmi, vie di esodo, addetti e presidi; per BESS seguire il piano emergenze specifico.",
+      "Rispettare esclusioni e sorveglianza prevista per hot work; segnalare anomalie immediatamente."
+    ],
+    "Dove vi radunate e quali informazioni date ai soccorsi?"
+  ],
+  "viabilità": [
+    "Investimento, retromarcia e interazione mezzi-pedoni",
+    [
+      "Condividere percorsi, ingressi, sensi di marcia e punti di attraversamento.",
+      "Verificare separazione pedoni/mezzi, visibilità e assistenza alle manovre ove prevista.",
+      "Adeguare la velocità alle condizioni reali e fermarsi se il percorso non è libero."
+    ],
+    "Chi verifica che l’area di manovra sia libera?"
+  ],
+  "dpi": [
+    "Scelta, compatibilità e uso dei DPI",
+    [
+      "Associare i DPI al rischio e alla lavorazione effettiva, secondo la valutazione applicabile.",
+      "Controllare integrità, taglia, compatibilità e addestramento richiesto.",
+      "Segnalare immediatamente DPI mancanti, usurati o non idonei."
+    ],
+    "Quale difetto vi porta a sostituire il DPI prima di iniziare?"
+  ],
+  "ordine e pulizia": [
+    "Inciampo, accessibilità e gestione materiali",
+    [
+      "Mantenere sgombri passaggi, vie di esodo e accesso ai presidi.",
+      "Organizzare deposito materiali, cavi e rifiuti nelle aree previste.",
+      "Rimuovere o mettere in sicurezza sversamenti e ostacoli prima di proseguire."
+    ],
+    "Chi gestisce il ripristino se trovate un passaggio ostruito?"
+  ],
+  "documentale": [
+    "Coerenza fra pianificazione e lavoro reale",
+    [
+      "Verificare disponibilità e aggiornamento dei documenti applicabili alla lavorazione.",
+      "Confrontare personale, mezzi e sequenza operativa con quanto autorizzato.",
+      "Gestire le variazioni prima dell’avvio e chiarire i ruoli del controllo operativo."
+    ],
+    "Quale variazione richiede una nuova verifica prima di lavorare?"
+  ],
+  "ambientale": [
+    "Sversamenti, rifiuti e protezione del suolo",
+    [
+      "Identificare sostanze, punti di travaso e aree sensibili.",
+      "Verificare contenimenti, kit di intervento e segregazione dei rifiuti.",
+      "In caso di perdita fermare la fonte se sicuro, delimitare e attivare il flusso di segnalazione."
+    ],
+    "Quali materiali sono disponibili per contenere una perdita?"
+  ],
+  "altro": [
+    "Riconoscimento del pericolo e gestione delle variazioni",
+    [
+      "Descrivere la sequenza di lavoro e identificare i pericoli specifici.",
+      "Confermare protezioni, ruoli e comunicazioni prima dell’avvio.",
+      "Interrompere in caso di condizioni diverse da quelle valutate."
+    ],
+    "Quale cambiamento rende necessario rivalutare il lavoro?"
+  ]
+}

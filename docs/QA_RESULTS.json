@@ -1,0 +1,27 @@
+{
+  "plugin_version": "0.2.0",
+  "date": "2026-10-20",
+  "backend_checks_passed": 56,
+  "model_2_0_0": {
+    "source": "user DOCX 3",
+    "parity_cases": 357,
+    "independent_scenarios": 2142,
+    "classification_boundaries": "passed",
+    "coefficients_invented": false
+  },
+  "responsive_axe_cases": 38,
+  "axe_violations_detected": 0,
+  "ocr": "local Italian OCR + multiline, 8 dates and re-extraction corrections passed",
+  "fresh_wordpress_zip_install": "passed without Elementor; shortcode, Wind/Solar/BESS, reactivation preservation",
+  "bundle_sha256": "abdd9d5b9603e882be1abfe06c1e68f19c3d9a55239fed1de5be03456827e30e",
+  "unverified": [
+    "AlterVista actual hosting",
+    "Elementor installed (official download HTTP 403)",
+    "20 representative synoptics",
+    "real iOS/Android devices and five users",
+    "complete manual WCAG and Office/PDF accessibility review"
+  ],
+  "remaining_work": "External acceptance gates in IMPLEMENTATION_STATUS.md; no production deployment",
+  "export_validation": "PDF/DOCX/XLSX/PPTX/ICS passed; native PPTX chart, Excel numeric reconciliation, 100-row A3 17 pages, meeting photos",
+  "navigation": "keyboard mobile menu, desktop, input retention on orientation passed"
+}

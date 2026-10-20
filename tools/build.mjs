@@ -1,0 +1,10 @@
+import {build} from 'esbuild';
+import fs from 'node:fs';
+import path from 'node:path';
+const dest='hse-risk-platform/assets/vendor';fs.mkdirSync(dest+'/core',{recursive:true});fs.mkdirSync(dest+'/lang',{recursive:true});
+fs.copyFileSync('node_modules/tesseract.js/dist/worker.min.js',dest+'/worker.min.js');
+for(const f of fs.readdirSync('node_modules/tesseract.js-core'))if(/\.(js|wasm)$/.test(f))fs.copyFileSync('node_modules/tesseract.js-core/'+f,dest+'/core/'+f);
+fs.copyFileSync('node_modules/@tesseract.js-data/ita/4.0.0/ita.traineddata.gz',dest+'/lang/ita.traineddata.gz');
+fs.copyFileSync('node_modules/pdfjs-dist/legacy/build/pdf.worker.min.mjs',dest+'/pdf.worker.min.mjs');
+await build({entryPoints:['hse-risk-platform/assets/app.js'],outfile:'hse-risk-platform/assets/app.bundle.js',bundle:true,minify:true,platform:'browser',target:['es2022'],define:{'process.env.NODE_ENV':'"production"'},legalComments:'eof'});
+const licenses=[];const walk=(dir)=>{for(const f of fs.readdirSync(dir,{withFileTypes:true})){if(f.name.startsWith('.'))continue;const p=path.join(dir,f.name);if(f.isDirectory()){if(fs.existsSync(p+'/package.json')){const pkg=JSON.parse(fs.readFileSync(p+'/package.json'));licenses.push(`${pkg.name}@${pkg.version}: ${pkg.license||'vedere licenza inclusa'}`);const l=fs.readdirSync(p).find(x=>/^licen[sc]e(\.|$)/i.test(x));if(l)licenses.push(fs.readFileSync(p+'/'+l,'utf8'));}if(f.name.startsWith('@'))walk(p);else if(fs.existsSync(p+'/node_modules'))walk(p+'/node_modules');}}};walk('node_modules');fs.writeFileSync('hse-risk-platform/THIRD_PARTY_LICENSES.txt',licenses.join('\n\n'));
