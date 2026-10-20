@@ -1,6 +1,6 @@
-# Evidenze di verifica — 20 ottobre 2026, plugin 0.2.0
+# Evidenze di verifica — 20 ottobre 2026, plugin 0.2.1
 
-Runtime locale: WordPress 7.1.3, PHP 8.3.35, MariaDB 11.4.13, Chromium, Node 24.19.0. Dati sintetici riconoscibili, nessuna migrazione reale o pubblicazione in produzione. Evidenze generate in `tests/artifacts` (escluse da Git).
+Runtime locale: WordPress 7.1.3, PHP 8.0.30, MariaDB 11.4.13, Chromium, Node 24.19.0. Dati sintetici riconoscibili, nessuna migrazione reale o pubblicazione in produzione. Evidenze generate in `tests/artifacts` (escluse da Git).
 
 ## Test riproducibili
 
@@ -15,7 +15,7 @@ Runtime locale: WordPress 7.1.3, PHP 8.3.35, MariaDB 11.4.13, Chromium, Node 24.
 - `python tests/validate_exports.py`: apertura PDF/Word/Excel e XML PPTX, indici Excel uguali al risultato salvato, grafico PowerPoint nativo editabile, stesso numero di pagine nel PDF management corrispondente, sinottico A3 multipagina e Word con tutte le 100 righe, intestazioni ripetute e foto nei report. Il grafico Excel è raster, con valori numerici disponibili nei fogli.
 - `npm run test:navigation`: menu mobile azionabile da tastiera, navigazione desktop e input conservati in verticale/orizzontale, tre ulteriori controlli axe.
 - Ispezione visiva di sintesi management, grafico contributi e sinottico A3 renderizzati; 100 attività su 17 pagine nel caso lungo. Corretto un ancoraggio OOXML di ExcelJS: il grafico è ora leggibile anche da openpyxl.
-- PHP lint su tutti gli otto file. Installazione dallo ZIP in WordPress isolato: `bash tools/test-package.sh`, shortcode protetto e autenticato, calcolo Wind/Solar/BESS e conservazione dei dati dopo riattivazione, senza Elementor.
+- PHP lint su tutti gli otto file. Installazione dallo ZIP in WordPress isolato: `bash tools/test-package.sh` con l’installer WordPress su PHP 8.0.30, shortcode protetto e autenticato, calcolo Wind/Solar/BESS e conservazione dei dati dopo riattivazione, senza Elementor.
 
 `npm test` esegue gli otto gruppi principali in sequenza, fermandosi al primo errore. `tools/test-integration.sh` conserva gli artefatti precedenti in `/tmp`, rigenera solo dati sintetici e conserva i container. Non usare questi strumenti con database di produzione.
 
@@ -29,3 +29,13 @@ Runtime locale: WordPress 7.1.3, PHP 8.3.35, MariaDB 11.4.13, Chromium, Node 24.
 - Modelli toolbox provenienti dal precedente codice, da adattare e revisionare con l'HSE; non sono autorizzazioni al lavoro o prescrizioni estratte da POS non disponibili.
 
 La matrice `IMPLEMENTATION_STATUS.md` mantiene Parziale per requisiti che richiedono tali verifiche esterne. Nessun blocco per sorgente del motore mancante: il modello è ora disponibile e verificato contro la fonte consegnata.
+
+## Collaudo aggiuntivo 0.2.1 sul PHP dell’hosting
+
+Suite `npm test` completa superata con `HSE_TEST_CONTAINER=hse-wp-php80 HSE_EXPECT_PHP=8.0.30 HSE_TEST_URL=http://127.0.0.1:8084`: tutti gli otto gruppi; poi validazione degli export superata. Controlli parser/API e test negativo ZIP superati separatamente. PHP e dipendenze non sono dedotti dall’immagine PHP 8.3: il runtime riporta davvero 8.0.30 anche dalle chiamate HTTP.
+
+Installazione su nuovo WordPress/database con prefisso `avtest_`: la vecchia 0.2.0 è rifiutata dall’installer per `incompatible_php_required_version`; la 0.2.1 è installata/attivata, quattro tabelle InnoDB create e dati conservati dopo riattivazione. Verificati anche amministrazione WordPress, login e REST HTTP in sottocartella. L’installer usato è il `Plugin_Upgrader` di WordPress; non una semplice estrazione del file ZIP.
+
+Sono rimasti invariati byte per byte motore/cataloghi e bundle JavaScript. Gli otto file sono parsati e le 107 funzioni globali verificate con il bootstrap WordPress corretto. Dettagli: PHP80_COMPATIBILITY.md.
+
+L’ambiente offline genera avvisi dei controlli aggiornamenti WordPress.org bloccati dalla rete/configurazione del test; non sono errori del motore o degli endpoint del plugin. Servizi di aggiornamento esterni, hosting AlterVista reale e gli altri gate della checklist non sono stati certificati.

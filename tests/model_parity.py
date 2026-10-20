@@ -1,6 +1,10 @@
 """Independent golden cases run the supplied Python functions against the PHP port."""
-import copy, importlib.util, json, math, pathlib, random, subprocess
+import copy, importlib.util, json, math, pathlib, random, subprocess, os
 root=pathlib.Path(__file__).resolve().parents[1]
+container=os.environ.get('HSE_TEST_CONTAINER','hse-wp')
+php_version=subprocess.check_output(['docker','exec',container,'php','-r','echo PHP_VERSION;'],text=True).strip()
+if os.environ.get('HSE_EXPECT_PHP'):assert php_version==os.environ['HSE_EXPECT_PHP'],php_version
+print('Runtime PHP effettivo:',php_version)
 spec=importlib.util.spec_from_file_location('original',root/'tests/reference/model_2_0_0.py')
 m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
 rng=random.Random(2000);cases=[]
@@ -12,12 +16,12 @@ for i in range(350):
 for count in [0,1,2]:
  d=m.default_data();d['nc_items']=[dict(theme='elettrico',severity='alta',status='Aperta',late=False,repeat=False)]*count;cases.append(d)
 for d in [dict(m.default_data(),hours=None,days=None,workers=None),dict(m.default_data(),hours=None,days=20,workers=100),dict(m.default_data(),hours=None,days=None,workers=100),dict(m.default_data(),hours=4000,days=20,workers=100)]:cases.append(d)
-subprocess.run(['docker','cp',str(root/'hse-risk-platform/includes/risk.php'),'hse-wp:/tmp/hse-risk.php'],check=True,capture_output=True)
-subprocess.run(['docker','cp',str(root/'hse-risk-platform/includes/risk-catalog.json'),'hse-wp:/tmp/risk-catalog.json'],check=True,capture_output=True)
+subprocess.run(['docker','cp',str(root/'hse-risk-platform/includes/risk.php'),container+':/tmp/hse-risk.php'],check=True,capture_output=True)
+subprocess.run(['docker','cp',str(root/'hse-risk-platform/includes/risk-catalog.json'),container+':/tmp/risk-catalog.json'],check=True,capture_output=True)
 runner="<?php define('ABSPATH','/tmp/');require '/tmp/hse-risk.php';$d=json_decode(stream_get_contents(STDIN),true);echo json_encode(array_map(function($r){$v=HSE_Risk::calculate($r);$v['scenarios']=HSE_Risk::scenarios($r,$v);return $v;},$d),JSON_UNESCAPED_UNICODE);"
 pathlib.Path('/tmp/hse-parity.php').write_text(runner)
-subprocess.run(['docker','cp','/tmp/hse-parity.php','hse-wp:/tmp/hse-parity.php'],check=True,capture_output=True)
-p=subprocess.run(['docker','exec','-i','hse-wp','php','/tmp/hse-parity.php'],input=json.dumps(cases),text=True,capture_output=True,check=True)
+subprocess.run(['docker','cp','/tmp/hse-parity.php',container+':/tmp/hse-parity.php'],check=True,capture_output=True)
+p=subprocess.run(['docker','exec','-i',container,'php','/tmp/hse-parity.php'],input=json.dumps(cases),text=True,capture_output=True,check=True)
 actual=json.loads(p.stdout)
 keys=['version','score','level','raw','floor','floor_reason','drivers','awareness_details','awareness_bonus','needs','reasons','context_score','context_target','context_basis','missing']
 def eq(a,b,path):
@@ -40,6 +44,6 @@ assert actual[351]['floor']==61 and actual[352]['floor']==81
 print(f'PASS {len(cases)} Python/PHP parity cases; every component, bonus, floor, context and reconciliation')
 # Classification must use unrounded values at every band edge.
 cmd="require '/tmp/hse-risk.php';foreach([0,20,20.00001,40,40.00001,60,60.00001,80,80.00001,100] as $x)echo HSE_Risk::level($x).'|';"
-bands=subprocess.check_output(['docker','exec','hse-wp','php','-r',"define('ABSPATH','/tmp/');"+cmd],text=True)
+bands=subprocess.check_output(['docker','exec',container,'php','-r',"define('ABSPATH','/tmp/');"+cmd],text=True)
 assert bands=='Basso|Basso|Medio basso|Medio basso|Medio|Medio|Alto|Alto|Critico|Critico|'
 print('PASS exact and adjacent classification boundaries')

@@ -1,6 +1,6 @@
 # Matrice requisito → implementazione → verifica
 
-Specifica 1.2. Completato indica funzione implementata con verifiche automatiche pertinenti, non certificazione di rilascio. Parziale/Bloccato non sono completamenti. Motore 2.0.0 fornito nel DOCX e portato in PHP con test di equivalenza. Versione plugin 0.2.0. Nessuna pubblicazione in produzione.
+Specifica 1.2. Completato indica funzione implementata con verifiche automatiche pertinenti, non certificazione di rilascio. Parziale/Bloccato non sono completamenti. Motore 2.0.0 fornito nel DOCX e portato in PHP con test di equivalenza. Versione plugin 0.2.1. Nessuna pubblicazione in produzione.
 
 | RF | Ambito | File / componente | Test / evidenza | Stato | Limite |
 |---|---|---|---|---|---|
@@ -62,7 +62,7 @@ Specifica 1.2. Completato indica funzione implementata con verifiche automatiche
 | RF-56 | Criteri misurabili di accettazione | hse-risk-platform/includes/domain.php; assets/app.js; tests/ | tests/browser.mjs; tests/workflows.mjs | Parziale | 10 imprese/100 attività e test automatici disponibili; mancano 20 sinottici reali, 5 utilizzatori e dispositivi fisici. |
 | RF-57 | Regole di sviluppo e prevalenza | hse-risk-platform.php; tools/; docs/ | tests/browser.mjs; tests/workflows.mjs | Completato | Flusso persistente e autorizzato; verifiche pertinenti in docs/QA.md. |
 | RF-58 | Architettura di riferimento | hse-risk-platform.php; tools/; docs/ | tests/browser.mjs; tests/workflows.mjs | Completato | Flusso persistente e autorizzato; verifiche pertinenti in docs/QA.md. |
-| RF-59 | Verifica dell’hosting e portabilità | hse-risk-platform.php; tools/; docs/ | tests/browser.mjs; tests/workflows.mjs | Parziale | Runtime locale verificato; piano AlterVista e integrazione Elementor effettiva non accessibili. |
+| RF-59 | Verifica dell’hosting e portabilità | hse-risk-platform.php; tools/; docs/ | tests/browser.mjs; tests/workflows.mjs | Parziale | PHP 8.0.30/WordPress 7.1.3 verificati: parser/API, suite e installazione ZIP su DB nuovo. Restano configurazione del piano AlterVista ed Elementor reale. |
 | RF-60 | Flusso minimo | hse-risk-platform/includes/api.php; assets/photo.js; assets/app.js | tests/integration.php | Completato | Flusso persistente e autorizzato; verifiche pertinenti in docs/QA.md. |
 | RF-61 | Scheda ed evidenze | hse-risk-platform/includes/api.php; assets/photo.js; assets/app.js | tests/integration.php | Parziale | Foto private originali/copie annotate, posizione esplicita e retention documentata; prove smartphone/upload interrotto pendenti. |
 | RF-62 | Riutilizzo senza doppio inserimento | hse-risk-platform/includes/api.php; assets/photo.js; assets/app.js | tests/integration.php | Completato | Riuso mediante ID e segnalazione unica; foto delle osservazioni congelate nella proposta riunione ed esportabili. |

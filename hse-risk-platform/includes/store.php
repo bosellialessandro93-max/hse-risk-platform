@@ -6,6 +6,11 @@ class HSE_Fault extends RuntimeException {
 }
 class HSE_Store {
  static function table($suffix='records'){global $wpdb;return $wpdb->prefix.'hse_'.$suffix;}
+ static function activate(){
+  $missing=[];foreach(['mysqli','mbstring','fileinfo','simplexml','zip'] as $extension)if(!extension_loaded($extension))$missing[]=$extension;
+  if(version_compare(PHP_VERSION,'8.0.30','<')||$missing){$message=version_compare(PHP_VERSION,'8.0.30','<')?'HSE Risk Platform richiede PHP 8.0.30 o successivo. ':'HSE Risk Platform: estensioni PHP mancanti: '.implode(', ',$missing).'. ';wp_die(esc_html($message.'Verificare i requisiti con il gestore hosting prima di attivare il plugin.'));}
+  self::migrate();
+ }
  static function migrate(){
   global $wpdb; require_once ABSPATH.'wp-admin/includes/upgrade.php';$c=$wpdb->get_charset_collate();
   dbDelta('CREATE TABLE '.self::table()." (

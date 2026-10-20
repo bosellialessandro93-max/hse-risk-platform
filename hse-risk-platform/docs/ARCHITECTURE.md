@@ -1,6 +1,6 @@
 # Architettura e contratti
 
-Plugin autonomo PHP 8.1+/WordPress, frontend JavaScript compilato con esbuild. Nessun processo Node/Python/Tesseract richiesto sul sito. Elementor usa lo shortcode WordPress; nessuna dipendenza da Elementor Pro, Streamlit o servizi AI. Tutti i percorsi operativi usano MySQL, non localStorage.
+Plugin autonomo PHP 8.0.30+/WordPress, frontend JavaScript compilato con esbuild. Nessun processo Node/Python/Tesseract richiesto sul sito. Elementor usa lo shortcode WordPress; nessuna dipendenza da Elementor Pro, Streamlit o servizi AI. Tutti i percorsi operativi usano MySQL, non localStorage.
 
 ## Persistenza e migrazioni
 
@@ -42,3 +42,9 @@ Licenze/versioni: `package-lock.json` e `hse-risk-platform/THIRD_PARTY_LICENSES.
 `includes/risk.php` e `risk-catalog.json`: porting delle funzioni pure del documento fornito; nessuna dipendenza Python sul sito. Contratto completo, coefficienti e provenienza in [MODEL_2_0_0.md](MODEL_2_0_0.md). Calcolo e scenario temporanei, salvataggio esplicito idempotente, hash degli input/politica, risultati ricalcolati dal server, storico e confronti autorizzati. Le bozze non cancellano revisioni Saved. Nessun evento da calendario, sopralluogo o download è conteggiato implicitamente.
 
 Gli export persistono snapshot e SHA-256 dei dati di origine; il digest non è una firma del file binario generato nel browser. Il widget Elementor opzionale richiama lo stesso shortcode e archivio. Nessuna migrazione di dati reali; schema invariato e aggiornamento additivo. I vecchi draft mantengono i valori; soltanto cataloghi riconosciuti possono essere calcolati.
+
+## Compatibilità PHP 8.0.30 — versione 0.2.1
+
+Nessuna dipendenza Composer/PHP esterna. Gli otto file PHP sono stati parsati dal runtime esatto e le 107 funzioni globali risolte in WordPress con gli include amministrativi effettivamente usati dal plugin. `str_contains`/`str_starts_with` sono API PHP 8.0, non 8.1; nessun enum, readonly, tipo intersezione o funzione PHP 8.1 necessaria è presente. Le dipendenze dei generatori/OCR sono JavaScript compilato e rimangono byte per byte invariate.
+
+L’activation hook controlla PHP minimo ed estensioni prima della migrazione. Tabelle/pesi/codice del motore e schema 1 invariati; la riattivazione conserva dati e revisioni. Vedere PHP80_COMPATIBILITY.md per installazione, runtime e limiti hosting.

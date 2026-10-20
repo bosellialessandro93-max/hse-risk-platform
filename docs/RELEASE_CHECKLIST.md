@@ -13,3 +13,13 @@ Questa è una checklist di verifiche ancora da eseguire, non un esito positivo.
 - [ ] Backup completo e ripristino su una nuova installazione staging; conservazione dati/revisioni dopo aggiornamento/disinstallazione.
 - [ ] Revisione dei modelli toolbox/checklist da parte dell'HSE; nessuna qualificazione normativa dei simboli personalizzati.
 - [ ] Approvazione separata del rilascio; nessuna migrazione o pubblicazione in produzione è autorizzata da questa preparazione.
+
+## Gate hosting per la 0.2.1
+
+- [x] PHP 8.0.30 effettivo: parsing, API, calcolo, REST, foto, OCR/export e installazione WordPress locale.
+- [x] Installer WordPress accetta la 0.2.1; attivazione e quattro tabelle InnoDB con prefisso non standard; dati conservati alla riattivazione.
+- [ ] Sul piano AlterVista effettivo: WordPress ≥6.6, estensioni mysqli/mbstring/fileinfo/SimpleXML/ZIP, permessi CREATE/ALTER e InnoDB.
+- [ ] PHP memory_limit 256 MB, upload 32 MB/post 48 MB o caricamento via gestore file/FTP, spazio DB e max_allowed_packet adeguati ai file grandi.
+- [ ] HTTPS, cache privata/REST esclusa, worker/WASM/font locali e limiti di esecuzione sul piano reale.
+
+La verifica di PHP 8.0.30 non certifica automaticamente tali impostazioni del piano AlterVista.

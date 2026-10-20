@@ -1,9 +1,10 @@
+const testOrigin=process.env.HSE_TEST_URL||'http://127.0.0.1:8080';
 import {chromium} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import fs from 'node:fs';
 const auth=JSON.parse(fs.readFileSync('.local/auth.json')),ids=JSON.parse(fs.readFileSync('.local/ids.json'));
 const browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox']});const context=await browser.newContext({acceptDownloads:true});const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
-await page.goto('http://127.0.0.1:8080/wp-login.php');await page.locator('#user_login').fill(auth.user);await page.locator('#user_pass').fill(auth.password);await page.locator('#wp-submit').click();await page.waitForURL(/wp-admin/);await page.goto('http://127.0.0.1:8080/?pagename=hse');await page.waitForFunction(()=>window.HSE_TEST?.state.site);
+await page.goto(testOrigin+'/wp-login.php');await page.locator('#user_login').fill(auth.user);await page.locator('#user_pass').fill(auth.password);await page.locator('#wp-submit').click();await page.waitForURL(/wp-admin/);await page.goto(testOrigin+'/?pagename=hse');await page.waitForFunction(()=>window.HSE_TEST?.state.site);
 await page.locator('[aria-label="Cantiere attivo"]').selectOption(ids.site_id);await page.waitForTimeout(250);
 await page.getByRole('button',{name:'Modifica cantiere',exact:true}).click();await page.getByLabel('Nome *',{exact:true}).fill('DEMO QA Wind – verifica anagrafica');await page.getByRole('button',{name:'Salva',exact:true}).click();await page.getByText(/Salvato · revisione/).waitFor();const siteName=await page.evaluate(()=>HSE_TEST.state.site.name);if(siteName!=='DEMO QA Wind – verifica anagrafica')throw new Error('Modifica anagrafica non persistita');await page.evaluate(()=>HSE_TEST.change('documents'));await page.getByRole('link',{name:'Apri archivio di origine',exact:true}).waitFor();if(await page.getByRole('link',{name:'Apri archivio di origine',exact:true}).getAttribute('href')!=='https://example.org/layout')throw new Error('Link archivio non disponibile');const reports=[];
 for(const width of [320,375,768,1024,1440]){

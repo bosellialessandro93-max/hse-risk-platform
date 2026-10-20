@@ -2,21 +2,21 @@
 /**
  * Plugin Name: HSE Risk Platform
  * Description: Workspace HSE autonomo: cantieri, valutazioni, sinottici, coordinamento e mappe.
- * Version: 0.2.0
+ * Version: 0.2.1
  * Requires at least: 6.6
- * Requires PHP: 8.1
+ * Requires PHP: 8.0.30
  * License: GPL-2.0-or-later
  * Text Domain: hse-risk-platform
  */
 if (!defined('ABSPATH')) exit;
-define('HSE_VERSION', '0.2.0');
+define('HSE_VERSION', '0.2.1');
 define('HSE_DIR', __DIR__);
 require_once __DIR__.'/includes/store.php';
 require_once __DIR__.'/includes/domain.php';
 require_once __DIR__.'/includes/risk.php';
 require_once __DIR__.'/includes/maps.php';
 require_once __DIR__.'/includes/api.php';
-register_activation_hook(__FILE__, ['HSE_Store','migrate']);
+register_activation_hook(__FILE__, ['HSE_Store','activate']);
 add_action('plugins_loaded', function(){ if(get_option('hse_schema') !== '1') HSE_Store::migrate(); });
 add_action('rest_api_init', ['HSE_API','routes']);
 add_action('template_redirect', function(){

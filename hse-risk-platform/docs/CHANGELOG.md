@@ -1,3 +1,13 @@
+# 0.2.1 — compatibilità PHP 8.0.30
+
+- Requisito PHP corretto a 8.0.30 dopo verifica reale, non per sola modifica del metadato.
+- Parsing di tutti gli otto file e disponibilità delle 107 funzioni PHP/WordPress controllati sul runtime esatto. Nessuna API/sintassi esclusiva di 8.1 riscontrata; nessun polyfill o coefficiente sostitutivo aggiunto.
+- Attivazione con controllo esplicito delle estensioni richieste; ZIP mancante produce un messaggio e non modifica le registrazioni.
+- Ambiente di test PHP 8.0.30 isolato e test parametrizzati per container/URL; attese del test tastiera corrette per attendere l’inizializzazione completa.
+- Installazione con Plugin_Upgrader WordPress, quattro tabelle InnoDB su database nuovo/prefisso personalizzato e conservazione dopo riattivazione. Riprodotto l’errore PHP 8.1 del vecchio ZIP.
+- Versione/schema del modello, formule, librerie e bundle JavaScript invariati. Nessuna migrazione distruttiva o pubblicazione sul sito reale.
+- Corretto il percorso del pacchetto nelle istruzioni; conservato lo ZIP 0.2.0 e il suo checksum.
+
 # 0.2.0 — 20/10/2026
 
 - Motore PHP 2.0.0 dal DOCX dell'utente: cataloghi, curve, detection descrittiva, Stop Work, sensibilizzazioni, soglie e contesto. Nessun coefficiente nuovo; confronto con il sorgente Python e sei scenari originali.

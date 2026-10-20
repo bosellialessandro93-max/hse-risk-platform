@@ -1,19 +1,19 @@
 # HSE Risk Platform
 
-Plugin WordPress autonomo, specifica 1.2 del 19/10/2026. Versione **0.2.0**, con motore PHP **2.0.0** portato dal codice completo allegato, senza ricostruire coefficienti dai massimali. Calcolo, salvataggio esplicito, storico, confronti e scenari sono collegati ai moduli operativi esistenti. Le verifiche esterne e i limiti residui sono distinti nella matrice; la Definition of Done complessiva richiede anche i collaudi reali indicati sotto.
+Plugin WordPress autonomo, specifica 1.2 del 19/10/2026. Versione **0.2.1**, con motore PHP **2.0.0** portato dal codice completo allegato, senza ricostruire coefficienti dai massimali. Calcolo, salvataggio esplicito, storico, confronti e scenari sono collegati ai moduli operativi esistenti. Le verifiche esterne e i limiti residui sono distinti nella matrice; la Definition of Done complessiva richiede anche i collaudi reali indicati sotto.
 
 ## Installazione WordPress / AlterVista
 
 1. In staging, eseguire backup completo di database e file WordPress.
-2. Verificare che il piano permetta plugin personalizzati. Requisiti: WordPress ≥6.6, PHP ≥8.1, MySQL/MariaDB con InnoDB, estensioni mysqli, JSON, fileinfo, mbstring, XML/SimpleXML e ZIP; GD consigliata. Verificati localmente WordPress 7.1.3, PHP 8.3.35 e MariaDB 11.4.
-3. Consigliati PHP memory_limit ≥256 MB e upload/post_max_size sufficienti per lo ZIP e file da 15 MB. Il browser deve supportare WebAssembly, worker e JavaScript moderno. I generatori e l'OCR sono inclusi: non occorrono Composer, Node, Python, Tesseract installato sul sito o API a pagamento.
-4. Caricare `dist/hse-risk-platform-0.1.0.zip` da **Plugin → Aggiungi plugin → Carica plugin**, installare e attivare. Se il limite upload è inferiore allo ZIP, estrarre la cartella `hse-risk-platform` in `wp-content/plugins` tramite il gestore file/FTP del proprio piano; non modificare functions.php.
+2. Verificare che il piano permetta plugin personalizzati. Requisiti: WordPress ≥6.6, PHP ≥8.0.30, MySQL/MariaDB con InnoDB, estensioni mysqli, JSON, fileinfo, mbstring, XML/SimpleXML e ZIP. L’attivazione segnala le estensioni mancanti prima di creare le tabelle. GD è facoltativa per il plugin: foto/OCR/export sono elaborati nel browser e i test sono riusciti senza GD server. Verificati localmente WordPress 7.1.3, PHP **8.0.30** (CLI e server web Apache) e MariaDB 11.4.13. Il precedente requisito PHP 8.1 era troppo restrittivo; la compatibilità è ora collaudata sul runtime esatto.
+3. Consigliati PHP memory_limit ≥256 MB, upload_max_filesize ≥32 MB e post_max_size ≥48 MB per il pacchetto di circa 21 MB e gli allegati fino a 15 MB. Verificare anche limiti WordPress/multisite/proxy, spazio database e max_allowed_packet per gli allegati grandi (32 MB consigliati). Il browser deve supportare WebAssembly, worker e JavaScript moderno. I generatori e l'OCR sono inclusi: non occorrono Composer, Node, Python, Tesseract installato sul sito o API a pagamento.
+4. Caricare `dist/hse-risk-platform-0.2.1.zip` da **Plugin → Aggiungi plugin → Carica plugin**, installare e attivare. Se il limite upload è inferiore allo ZIP, estrarre la cartella `hse-risk-platform` in `wp-content/plugins` tramite il gestore file/FTP del proprio piano; non modificare functions.php.
 5. Creare una pagina con il blocco Shortcode: `[hse_platform]`. In Elementor usare il widget **Shortcode** con lo stesso testo. È disponibile anche il widget HSE Risk Platform, quando Elementor è attivo. Elementor e Elementor Pro non sono necessari; il plugin non usa iframe o la vecchia app.
 6. Accedere come amministratore WordPress. Creare cantiere Wind/Solar/BESS, poi **Archivio e impostazioni → Aree / WTG**, **Imprese**, **Assegnazioni**. Creare prima gli account nominativi in **Utenti** WordPress; inserire ID utente, ruolo e cantiere. Per HSE impresa assegnare anche l'impresa e l'eventuale condivisione dei piani.
 7. Verificare accesso da un secondo account/sessione. Escludere pagina HSE e `/hse/v1/*` da cache di hosting/plugin/CDN; escludere gli URL REST con `rest_route` se i permalink sono semplici. Il plugin invia no-store/noindex, ma configurazioni di cache esterne vanno provate.
 8. Verificare HTTPS, dimensioni upload, worker/WASM e download sul piano effettivo prima di usare dati reali. Nessuna pubblicazione o migrazione di dati reali è stata eseguita.
 
-**AlterVista non è stato verificato sul piano reale**. Mancano accesso all'hosting, informazioni del piano e prove con la sua cache. Usare [docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md); non interpretare il funzionamento locale come certificazione di compatibilità del piano.
+**PHP 8.0.30 è stato verificato realmente; il resto del piano AlterVista non è stato verificato da remoto**. Mancano accesso all'hosting, informazioni del piano e prove con la sua cache. Usare [docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md); non interpretare il funzionamento locale come certificazione di compatibilità del piano.
 
 ## Uso dei moduli
 
@@ -53,6 +53,19 @@ npm test
 python tests/validate_exports.py
 python tools/package.py
 ```
+
+Per ripetere il collaudo esatto su PHP 8.0.30 senza sostituire l’ambiente precedente:
+
+```bash
+bash tools/dev-up.sh
+bash tools/php80/prepare.sh
+HSE_TEST_CONTAINER=hse-wp-php80 HSE_EXPECT_PHP=8.0.30 HSE_TEST_URL=http://127.0.0.1:8084 npm test
+python tests/validate_exports.py
+bash tools/test-package.sh
+node tests/php80-web.mjs
+```
+
+Il test ZIP usa l’installer WordPress, riproduce il rifiuto della 0.2.0 e verifica la 0.2.1 su un database nuovo con prefisso personalizzato. Dettagli ed evidenze: [docs/PHP80_COMPATIBILITY.md](docs/PHP80_COMPATIBILITY.md). I `.deb` necessari solo al container di prova vengono scaricati in `/tmp` con checksum verificati e non sono inclusi nel plugin.
 
 Docker è usato solo per WordPress/MySQL di sviluppo. I container `hse-wp` e `hse-db` sono locali, con database sintetico isolato e credenziali di test generate nel bootstrap; non usarli in produzione. Chromium deve essere disponibile in `/usr/bin/chromium` per i test browser. `tools/dev-up.sh` è ripetibile e conserva i container esistenti. La produzione usa soltanto il plugin compilato.
 
