@@ -1,0 +1,2 @@
+streamlit[auth]==1.56.0
+PyMySQL==1.1.2

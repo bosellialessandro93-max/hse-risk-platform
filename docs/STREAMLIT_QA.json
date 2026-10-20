@@ -1,0 +1,210 @@
+{
+  "date": "2026-10-20",
+  "base_branch": "redesign-ux-0.3.0",
+  "base_commit": "967ea32f51c41831562c788b05dfdb7acafde9dd",
+  "target_branch": "streamlit-port",
+  "entrypoint": "app.py",
+  "runtime": {
+    "python": "3.12.14",
+    "streamlit": "1.56.0",
+    "php": "8.0.30 (independent CLI through Docker in QA)",
+    "database": "MariaDB 11.4.13 external to Streamlit process"
+  },
+  "model": "2.0.0",
+  "backend_checks": 39,
+  "backend_check_names": [
+    "create/read site",
+    "native account membership",
+    "cross-site permissions",
+    "admin-only common inspection target",
+    "optimistic revisions",
+    "durable idempotency",
+    "idempotency fingerprint",
+    "reader and company isolation",
+    "company own creation",
+    "private binary durable storage",
+    "photo link",
+    "formal high floor and detection",
+    "explicit risk save/history",
+    "stale calculation guard",
+    "independent scenarios",
+    "Solar calculation",
+    "BESS calculation",
+    "plan review and calendar publication",
+    "last confirmed calendar revision retained",
+    "meeting immutable sources with photos",
+    "meeting finalization",
+    "toolbox and held sessions",
+    "action plan closure",
+    "site-demo.kml import",
+    "site-demo.kmz import",
+    "malicious KML/KMZ rejected",
+    "export snapshot pdf",
+    "export snapshot docx",
+    "export snapshot xlsx",
+    "export snapshot pptx",
+    "export snapshot management-pdf",
+    "export snapshot json",
+    "backup preview with binary",
+    "atomic restore",
+    "concurrent update conflict",
+    "357 golden model cases and 2142 scenarios",
+    "OIDC unassigned identity provisioning",
+    "OIDC unverified email rejection",
+    "bad password rejected"
+  ],
+  "model_comparisons": 357,
+  "independent_scenarios": 2142,
+  "exact_adjacent_threshold_cases": 10,
+  "health_http_status": 200,
+  "wordpress_tree_unchanged": true,
+  "protected_source_sha256": {
+    "hse-risk-platform/includes/api.php": "01e4390de70966f6cfdc073d33440cf54c38ae02b2a0f714532e7d4f4e06108d",
+    "hse-risk-platform/includes/domain.php": "cc3605f20bae31f116f1343d4c38c8bb083b5a367978d6e48865e6c691170e82",
+    "hse-risk-platform/includes/elementor.php": "06fedf8de7c1991fb675a48ab759195c8efa0bf40990cb44c0d2aaf15b2cd1bf",
+    "hse-risk-platform/includes/maps.php": "5ff356307f737efd50fe731a0c8f9cbcef453bfd07b50ca6882ec0564b5b1c2a",
+    "hse-risk-platform/includes/risk-catalog.json": "bb193fae1ae6d7dff337a756b2d7e17d911629860c7fe2c5cf8812c3b49bf6d5",
+    "hse-risk-platform/includes/risk.php": "e5d3bfa1f5382d5910afeb48846a68e9c7d07ce24e88cc5d8acc6c3d6e0f1e3a",
+    "hse-risk-platform/includes/store.php": "35cccfe37e1749c89bff167976692e89d9f24474c9e99cc4fc8d1a21e80fcdf7",
+    "hse-risk-platform/includes/toolbox-catalog.json": "70ee018771c26779b1b923c79fc15874bb44a327d496b7b035cfd73fa6aa586f"
+  },
+  "native_auth": {
+    "native_accounts": true,
+    "pbkdf2_600000": true,
+    "own_password_change": true,
+    "admin_password_reset": true,
+    "session_version_revocation": true,
+    "five_failures_lock_account": true,
+    "disabled_account_rejected": true,
+    "privilege_escalation_rejected": true
+  },
+  "real_role_browser_logins": [
+    {
+      "role": "manager",
+      "login": true,
+      "permissions": true
+    },
+    {
+      "role": "reader",
+      "login": true,
+      "permissions": true
+    },
+    {
+      "role": "company",
+      "login": true,
+      "permissions": true
+    },
+    {
+      "role": "outsider",
+      "login": true,
+      "permissions": true
+    }
+  ],
+  "accounts_ui": {
+    "native_creation": true,
+    "new_account_login": true,
+    "disabled_account_session_revoked": true,
+    "password_reset_session_revoked": true,
+    "nonadmin_account_management_hidden": true
+  },
+  "browser": {
+    "errors": [],
+    "reports": [
+      {
+        "width": 375,
+        "violations": []
+      },
+      {
+        "width": 768,
+        "violations": []
+      },
+      {
+        "width": 1440,
+        "violations": []
+      }
+    ],
+    "risk_saved": 61,
+    "ocr_rows": 2,
+    "pdf_source_pages": 1,
+    "formats": [
+      "pdf",
+      "docx",
+      "xlsx",
+      "pptx",
+      "management-pdf",
+      "json",
+      "ics",
+      "png"
+    ],
+    "photos": true,
+    "annotation": true,
+    "history": true,
+    "relogin_persistence": true,
+    "site_permalink": true,
+    "geolocation": true
+  },
+  "exports": {
+    "files_checked": 53,
+    "formats": {
+      ".pdf": 24,
+      ".pptx": 6,
+      ".docx": 16,
+      ".xlsx": 6,
+      ".ics": 1
+    },
+    "pdf_evidence_images": 52,
+    "risk_excel_reconciled": true,
+    "json_reconciled": true,
+    "native_pptx_chart": true
+  },
+  "session_isolation": {
+    "cross_identity_response_cache_cleared": true,
+    "disabled_account_state_cleared": true,
+    "missing_configuration_stops_without_local_archive": true
+  },
+  "process_restart_storage": {
+    "process_restart": true,
+    "external_tables": {
+      "hse_records": {
+        "rows": 167,
+        "sha256": "da7dc5a8737d8e9bbde499d44f4ce83fbc52f32f89f7701f5bdd032d48244716"
+      },
+      "hse_revisions": {
+        "rows": 256,
+        "sha256": "a25d1d1c6cefe3a0a3421678f18fe186ae973ad53374224f3977289daeb7d3fe"
+      },
+      "hse_requests": {
+        "rows": 228,
+        "sha256": "93d4d9faeaf5a60b55d4f72d574a636bbe60dd8c86f69f84f49242938b69017d"
+      },
+      "hse_assets": {
+        "rows": 16,
+        "sha256": "9f3c8bce78f32dfd1931eb456651c9fd2dfc105f14df3016e76ce9128c5968bc"
+      },
+      "users": {
+        "rows": 28,
+        "sha256": "64355411e52501cee4c635f65802005c51ca1937bc54715a9411df3e93de5967"
+      },
+      "options": {
+        "rows": 2,
+        "sha256": "b6bfeadba76b144b349c2b3e08e05cbd38e1794f863955e5a8ef405cc4176d90"
+      }
+    },
+    "all_identical": true
+  },
+  "all_final_checks_passed": true,
+  "omitted_application_modules": [],
+  "unverified": [
+    "Actual Streamlit Community Cloud deployment and APT package installation in that account",
+    "Real external provider MySQL TLS handshake: local QA used a private Docker network without TLS",
+    "Real OIDC provider authorization/callback: verified/unverified claim mapping tested locally",
+    "Real mobile devices, screen readers, full manual WCAG/Office review and representative industrial OCR corpus"
+  ],
+  "deployment_requirements": [
+    "Python 3.12; requirements.txt",
+    "PHP CLI and extensions from packages.txt; minimum PHP 8.0.30",
+    "Dedicated persistent external MySQL/MariaDB with InnoDB and TLS",
+    "Community Cloud Secrets: database and hse_auth; auth section for optional OIDC"
+  ],
+  "temporary_files_are_not_archive": true
+}

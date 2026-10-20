@@ -1,0 +1,5 @@
+php-cli
+php-mysql
+php-mbstring
+php-xml
+php-zip
