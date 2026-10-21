@@ -1,4 +1,4 @@
-"""Run: streamlit run app.py. Durable data lives exclusively in external MySQL."""
+"""Run: streamlit run app.py. Durable data lives exclusively in external MySQL/PostgreSQL."""
 import json
 import os
 import re

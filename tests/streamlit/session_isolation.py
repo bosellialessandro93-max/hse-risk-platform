@@ -3,7 +3,7 @@ import json
 import os
 from pathlib import Path
 import sys
-ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT));os.environ.update(json.loads((ROOT/'.local/streamlit-test-env.json').read_text()))
+ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT));os.environ.update(json.loads((Path(os.environ.get('HSE_QA_DIR', ROOT/'.local'))/'streamlit-test-env.json').read_text()))
 from streamlit.testing.v1 import AppTest
 from streamlit_app import database
 c=json.loads(os.environ['HSE_DATABASE']);a=json.loads(os.environ['HSE_AUTH']);admin=database.authenticate(c,a['bootstrap_username'],a['bootstrap_password']);assert admin

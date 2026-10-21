@@ -2,14 +2,14 @@
 // CLI only: never exposed as an HTTP service. Actor and DB configuration come from Python.
 if(PHP_SAPI!=='cli')exit(1);
 error_reporting(E_ALL);ini_set('display_errors','0');date_default_timezone_set('UTC');
-require __DIR__.'/compatibility.php';define('ABSPATH',__DIR__.'/');define('HSE_VERSION','0.3.0-streamlit');
+require __DIR__.'/compatibility.php';require __DIR__.'/postgres.php';define('ABSPATH',__DIR__.'/');define('HSE_VERSION','0.3.0-streamlit');
 $source=dirname(__DIR__,2).'/hse-risk-platform/includes/';foreach(['store','domain','risk','maps','api'] as $name)require $source.$name.'.php';
 $tmp=[];
 try{
  $input=json_decode(stream_get_contents(STDIN),true,512,JSON_THROW_ON_ERROR);$GLOBALS['hse_actor']=$input['actor']??['id'=>0,'is_admin'=>false];
  if(!is_user_logged_in())throw new HSE_Fault('Autenticazione richiesta',401);
  if(($input['action']??'')==='calculate_model'){$models=$input['model'];$calculate=function($model){$value=HSE_Risk::calculate($model);$value['scenarios']=HSE_Risk::scenarios($model,$value);return $value;};echo wp_json_encode(['data'=>isset($models[0])?array_map($calculate,$models):$calculate($models)]);exit;}
- $wpdb=new HSE_DB(json_decode(getenv('HSE_DATABASE'),true,512,JSON_THROW_ON_ERROR));
+ $config=json_decode(getenv('HSE_DATABASE'),true,512,JSON_THROW_ON_ERROR);$wpdb=($config['driver']??'mysql')==='postgresql'?new HSE_PG_DB($config):new HSE_DB($config);
  if(($input['action']??'')==='bootstrap'){HSE_Store::activate();echo wp_json_encode(['data'=>['schema'=>get_option('hse_schema')]]);exit;}
  $request=$input['request'];if(!in_array($request['method']??'GET',['GET','POST','PATCH','DELETE']))throw new HSE_Fault('Metodo non ammesso');
  if(strlen(wp_json_encode($request))>64*1024*1024)throw new HSE_Fault('Richiesta oltre 64 MB',413);

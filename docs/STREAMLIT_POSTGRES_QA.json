@@ -1,0 +1,183 @@
+{
+  "date": "2026-10-21",
+  "branch": "streamlit-port",
+  "scope": "PostgreSQL/Neon support; MySQL preserved; WordPress and risk engine unchanged",
+  "runtime": {
+    "python": "3.12.14",
+    "streamlit": "1.56.0",
+    "php": "8.4.24 standalone CLI",
+    "database": "PostgreSQL 17.11 local TCP dedicated synthetic database",
+    "pooler": "PgBouncer 1.24.1 transaction mode, pool size 3",
+    "browser": "Chromium 150.0.7871.181"
+  },
+  "postgres_direct_backend": {
+    "passed": true,
+    "checks": [
+      "create/read site",
+      "native account membership",
+      "cross-site permissions",
+      "admin-only common inspection target",
+      "optimistic revisions",
+      "durable idempotency",
+      "idempotency fingerprint",
+      "reader and company isolation",
+      "company own creation",
+      "private binary durable storage",
+      "photo link",
+      "formal high floor and detection",
+      "explicit risk save/history",
+      "stale calculation guard",
+      "independent scenarios",
+      "Solar calculation",
+      "BESS calculation",
+      "plan review and calendar publication",
+      "last confirmed calendar revision retained",
+      "meeting immutable sources with photos",
+      "meeting finalization",
+      "toolbox and held sessions",
+      "action plan closure",
+      "site-demo.kml import",
+      "site-demo.kmz import",
+      "malicious KML/KMZ rejected",
+      "export snapshot pdf",
+      "export snapshot docx",
+      "export snapshot xlsx",
+      "export snapshot pptx",
+      "export snapshot management-pdf",
+      "export snapshot json",
+      "backup preview with binary",
+      "atomic restore",
+      "concurrent update conflict",
+      "357 golden model cases and 2142 scenarios",
+      "OIDC unassigned identity provisioning",
+      "OIDC unverified email rejection",
+      "bad password rejected"
+    ],
+    "total": 39,
+    "golden_models": 357,
+    "scenarios": 2142
+  },
+  "postgres_tls_transaction_pool_backend": {
+    "passed": true,
+    "total": 39,
+    "golden_models": 357,
+    "scenarios": 2142
+  },
+  "postgres_specific": {
+    "url_parsing_and_redaction": true,
+    "mysql_config_preserved": true,
+    "concurrent_bootstrap_one_admin": true,
+    "concurrent_idempotent_create": true,
+    "bytea_all_256_bytes": true,
+    "unicode_sql_literal_roundtrip": true,
+    "options_upsert": true,
+    "record_revision_request_rollback": true
+  },
+  "authentication": {
+    "native_accounts": true,
+    "pbkdf2_600000": true,
+    "own_password_change": true,
+    "admin_password_reset": true,
+    "session_version_revocation": true,
+    "five_failures_lock_account": true,
+    "disabled_account_rejected": true,
+    "privilege_escalation_rejected": true
+  },
+  "session_isolation": {
+    "cross_identity_response_cache_cleared": true,
+    "disabled_account_state_cleared": true,
+    "missing_configuration_stops_without_local_archive": true
+  },
+  "browser_on_tls_transaction_pool": {
+    "errors": [],
+    "reports": [
+      {
+        "width": 375,
+        "violations": []
+      },
+      {
+        "width": 768,
+        "violations": []
+      },
+      {
+        "width": 1440,
+        "violations": []
+      }
+    ],
+    "risk_saved": 61,
+    "ocr_rows": 2,
+    "pdf_source_pages": 1,
+    "formats": [
+      "pdf",
+      "docx",
+      "xlsx",
+      "pptx",
+      "management-pdf",
+      "json",
+      "ics",
+      "png"
+    ],
+    "photos": true,
+    "annotation": true,
+    "history": true,
+    "relogin_persistence": true,
+    "site_permalink": true,
+    "geolocation": true
+  },
+  "cold_process_restart_on_tls_transaction_pool": {
+    "process_restart": true,
+    "external_tables": {
+      "hse_records": {
+        "rows": 71,
+        "sha256": "38f71e92cf9da9f39cd6430e1410b0da5e208546c7cc3c12c90a2d6586a6a7a9"
+      },
+      "hse_revisions": {
+        "rows": 112,
+        "sha256": "8ef8f4c7794260d24357c1ae124c5e162c916f795320687a79f2ae0757d80653"
+      },
+      "hse_requests": {
+        "rows": 95,
+        "sha256": "a76181d52000bbeee12028a400f46c1f907a1a996410a8b60a000a008faf6e1d"
+      },
+      "hse_assets": {
+        "rows": 7,
+        "sha256": "7a468e6bf34edd84bb2db7fa92eb974fb429d7e460771d33ed31bbd4d05495e5"
+      },
+      "users": {
+        "rows": 13,
+        "sha256": "3447c8c004089678a3d61f550040ded0e1a2e2c629606a0ddafca7468b831057"
+      },
+      "options": {
+        "rows": 3,
+        "sha256": "09e0d0ad7d54dcdcf7a3073b593b0e86fe1dea0999f119874a0bbdcfa3e3d1c1"
+      }
+    },
+    "all_identical": true
+  },
+  "tls": {
+    "local_test_certificate_only": true,
+    "python_and_php_require": true,
+    "python_and_php_verify_full": true,
+    "trusted_ca_accepted": true,
+    "untrusted_ca_rejected": true,
+    "direct_scram_channel_binding_require": true,
+    "transaction_pool_tls": true
+  },
+  "additional_checks": {
+    "native_site_creation_ui": true,
+    "health_http_200_after_restart": true,
+    "php_parse_9_files": true,
+    "risk_threshold_boundaries_10": true,
+    "python_compile": true,
+    "js_syntax": true,
+    "pip_check": true,
+    "reproducible_qa_runner": true
+  },
+  "not_executed": [
+    "Connection to the user Neon project (credentials unavailable)",
+    "Deployment on user Streamlit Community Cloud account and its APT installation",
+    "Real OIDC provider login",
+    "New execution of original MySQL/MariaDB suite in this environment; prior results retained in STREAMLIT_QA.json",
+    "Migration of existing production data from WordPress/MySQL; no automatic migration is performed"
+  ]
+}

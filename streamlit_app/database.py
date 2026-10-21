@@ -1,16 +1,41 @@
-"""External MySQL storage for accounts/options. Domain records use the same DB through PHP."""
+"""External MySQL/PostgreSQL storage for accounts/options. Domain records use the same DB through PHP."""
 import base64
 import hashlib
 import hmac
 import re
 import secrets
 import ssl
+from urllib.parse import urlsplit, unquote, parse_qs
 from contextlib import contextmanager
 
 import pymysql
 
 
 def validated_config(config):
+    config = dict(config)
+    if config.get('url'):
+        try:
+            parts = urlsplit(config['url'])
+            if parts.scheme not in ('postgresql', 'postgres') or not parts.hostname:
+                raise ValueError()
+            options = parse_qs(parts.query)
+            config.update(driver='postgresql', host=parts.hostname, port=parts.port or 5432,
+                          user=unquote(parts.username or ''), password=unquote(parts.password or ''),
+                          name=unquote(parts.path.lstrip('/')),
+                          sslmode=options.get('sslmode', ['verify-full'])[0],
+                          channel_binding=options.get('channel_binding', ['prefer'])[0])
+        except (ValueError, TypeError):
+            raise ValueError('URL PostgreSQL non valido.') from None
+    config.setdefault('driver', 'mysql')
+    if config['driver'] not in ('mysql', 'postgresql'):
+        raise ValueError('Database supportati: mysql e postgresql.')
+    if config['driver'] == 'postgresql':
+        config.setdefault('sslmode', 'verify-full')
+        config.setdefault('sslrootcert', ssl.get_default_verify_paths().cafile)
+        if config['sslmode'] not in ('verify-full', 'require', 'disable'):
+            raise ValueError('sslmode PostgreSQL: verify-full o require (disable solo per test locali).')
+        if config.get('channel_binding', 'prefer') not in ('prefer', 'require', 'disable'):
+            raise ValueError('channel_binding PostgreSQL non valido.')
     required = ('host', 'user', 'password', 'name')
     if any(key not in config or (not config[key] and key != 'password') for key in required):
         raise ValueError('Configurare host, user, password e name del database esterno.')
@@ -25,6 +50,27 @@ def validated_config(config):
 @contextmanager
 def connection(config):
     config = validated_config(config)
+    if config['driver'] == 'postgresql':
+        import psycopg
+        from psycopg.rows import dict_row
+        db = psycopg.connect(host=config['host'], port=int(config.get('port', 5432)),
+                             user=config['user'], password=config['password'], dbname=config['name'],
+                             sslmode=config['sslmode'], sslrootcert=config.get('sslrootcert'),
+                             channel_binding=config.get('channel_binding', 'prefer'),
+                             connect_timeout=10, row_factory=dict_row)
+        try:
+            with db.cursor() as cur:
+                cur.execute("SET LOCAL TIME ZONE 'UTC'")
+                cur.execute("SET LOCAL statement_timeout = '30s'")
+                cur.execute("SET LOCAL lock_timeout = '10s'")
+            yield db
+            db.commit()
+        except Exception:
+            db.rollback()
+            raise
+        finally:
+            db.close()
+        return
     context = None
     if config['tls']:
         context = ssl.create_default_context()
@@ -65,6 +111,9 @@ def password_matches(password, encoded):
 
 
 def initialize(config, auth):
+    config = validated_config(config)
+    if config['driver'] == 'postgresql':
+        return initialize_postgres(config, auth)
     prefix = config['prefix']
     with connection(config) as db, db.cursor() as cur:
         cur.execute(f'''CREATE TABLE IF NOT EXISTS {prefix}users (
@@ -116,8 +165,11 @@ def authenticate(config, username, password):
     username = username.casefold().strip()[:254]
     prefix = config['prefix']
     with connection(config) as db, db.cursor() as cur:
-        cur.execute(f'INSERT IGNORE INTO {prefix}login_limits (username) VALUES (%s)', (username,))
-        cur.execute(f'SELECT *, locked_until > UTC_TIMESTAMP() AS locked FROM {prefix}login_limits WHERE username=%s FOR UPDATE', (username,))
+        pg = validated_config(config)['driver'] == 'postgresql'
+        sql = f'INSERT INTO {prefix}login_limits (username) VALUES (%s) ON CONFLICT DO NOTHING' if pg else f'INSERT IGNORE INTO {prefix}login_limits (username) VALUES (%s)'
+        cur.execute(sql, (username,))
+        now = 'CURRENT_TIMESTAMP' if pg else 'UTC_TIMESTAMP()'
+        cur.execute(f'SELECT *, locked_until > {now} AS locked FROM {prefix}login_limits WHERE username=%s FOR UPDATE', (username,))
         limits = cur.fetchone()
         if limits['locked']:
             return None
@@ -129,6 +181,12 @@ def authenticate(config, username, password):
         if ok and user:
             cur.execute(f'DELETE FROM {prefix}login_limits WHERE username=%s', (username,))
             return public_user(user)
+        if pg:
+            cur.execute(f'''UPDATE {prefix}login_limits SET
+                failures=CASE WHEN last_failure < CURRENT_TIMESTAMP-INTERVAL '15 minutes' THEN 1 ELSE failures+1 END,
+                locked_until=CASE WHEN (CASE WHEN last_failure < CURRENT_TIMESTAMP-INTERVAL '15 minutes' THEN 1 ELSE failures+1 END)>=5 THEN CURRENT_TIMESTAMP+INTERVAL '15 minutes' ELSE NULL END,
+                last_failure=CURRENT_TIMESTAMP WHERE username=%s''', (username,))
+            return None
         cur.execute(f'''UPDATE {prefix}login_limits SET failures=IF(last_failure < UTC_TIMESTAMP()-INTERVAL 15 MINUTE,1,failures+1),
             locked_until=IF(failures>=5,UTC_TIMESTAMP()+INTERVAL 15 MINUTE,NULL),last_failure=UTC_TIMESTAMP() WHERE username=%s''', (username,))
         return None
@@ -148,9 +206,11 @@ def oidc_user(config, identity, auth):
         cur.execute(f'SELECT * FROM {config["prefix"]}users WHERE email=%s FOR UPDATE', (email,))
         user = cur.fetchone()
         if not user:
-            cur.execute(f'INSERT INTO {config["prefix"]}users (username,email,display_name,is_admin) VALUES (%s,%s,%s,%s)',
-                        (email, email, str(identity.get('name', email))[:120], admin))
-            cur.execute(f'SELECT * FROM {config["prefix"]}users WHERE id=%s', (cur.lastrowid,))
+            pg = validated_config(config)['driver'] == 'postgresql'
+            cur.execute(f'INSERT INTO {config["prefix"]}users (username,email,display_name,is_admin) VALUES (%s,%s,%s,%s)' + (' RETURNING id' if pg else ''),
+                        (email, email, str(identity.get('name', email))[:120], int(admin)))
+            uid = cur.fetchone()['id'] if pg else cur.lastrowid
+            cur.execute(f'SELECT * FROM {config["prefix"]}users WHERE id=%s', (uid,))
             user = cur.fetchone()
         if not user['active']:
             raise ValueError('Account disabilitato.')
@@ -168,14 +228,14 @@ def manage_users(config, actor, *, create=None, update=None):
             if not username or len(username) > 254:
                 raise ValueError('Nome utente non valido.')
             cur.execute(f'INSERT INTO {prefix}users (username,display_name,password_hash,is_admin) VALUES (%s,%s,%s,%s)',
-                        (username, create['display_name'][:120] or username, password_hash(create['password']), bool(create.get('is_admin'))))
+                        (username, create['display_name'][:120] or username, password_hash(create['password']), int(bool(create.get('is_admin')))))
         if update:
             if int(update['id']) == int(actor['id']):
                 raise ValueError('Gestire il proprio account da un altro amministratore.')
             if 'password' in update:
                 cur.execute(f'UPDATE {prefix}users SET password_hash=%s,token_version=token_version+1 WHERE id=%s', (password_hash(update['password']), update['id']))
             else:
-                cur.execute(f'UPDATE {prefix}users SET active=%s,is_admin=%s WHERE id=%s', (bool(update['active']), bool(update['is_admin']), update['id']))
+                cur.execute(f'UPDATE {prefix}users SET active=%s,is_admin=%s WHERE id=%s', (int(bool(update['active'])), int(bool(update['is_admin'])), update['id']))
         cur.execute(f'SELECT id,username,email,display_name,is_admin,active FROM {prefix}users ORDER BY id')
         return cur.fetchall()
 
@@ -188,3 +248,29 @@ def change_password(config, actor, old_password, new_password):
             raise ValueError('Password attuale non corretta.')
         cur.execute(f'UPDATE {config["prefix"]}users SET password_hash=%s,token_version=token_version+1 WHERE id=%s', (password_hash(new_password), actor['id']))
         return row['token_version'] + 1
+
+
+def initialize_postgres(config, auth):
+    prefix = config['prefix']
+    with connection(config) as db, db.cursor() as cur:
+        # Transaction-scoped lock works with Neon transaction pooling; no session lock leaks.
+        cur.execute("SELECT pg_advisory_xact_lock(hashtextextended(%s, 0))", (prefix + 'hse_bootstrap',))
+        cur.execute(f'''CREATE TABLE IF NOT EXISTS {prefix}users (
+            id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY, username VARCHAR(254) NOT NULL UNIQUE,
+            email VARCHAR(254) NULL UNIQUE, display_name VARCHAR(120) NOT NULL,
+            password_hash VARCHAR(512) NOT NULL DEFAULT '', is_admin SMALLINT NOT NULL DEFAULT 0,
+            active SMALLINT NOT NULL DEFAULT 1, token_version BIGINT NOT NULL DEFAULT 1,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)''')
+        cur.execute(f'ALTER TABLE {prefix}users ADD COLUMN IF NOT EXISTS token_version BIGINT NOT NULL DEFAULT 1')
+        cur.execute(f'CREATE TABLE IF NOT EXISTS {prefix}options (name VARCHAR(190) PRIMARY KEY, value TEXT NOT NULL)')
+        cur.execute(f'''CREATE TABLE IF NOT EXISTS {prefix}login_limits (
+            username VARCHAR(254) PRIMARY KEY, failures INT NOT NULL DEFAULT 0,
+            last_failure TIMESTAMP NULL, locked_until TIMESTAMP NULL)''')
+        cur.execute(f'SELECT COUNT(*) AS n FROM {prefix}users')
+        if cur.fetchone()['n'] == 0 and auth.get('mode', 'password') == 'password':
+            username, password = auth.get('bootstrap_username'), auth.get('bootstrap_password')
+            if username and password:
+                if password.startswith('REPLACE_'):
+                    raise ValueError('Sostituire la password bootstrap di esempio.')
+                cur.execute(f'INSERT INTO {prefix}users (username,display_name,password_hash,is_admin) VALUES (%s,%s,%s,1)',
+                            (username.casefold().strip(), 'Amministratore', password_hash(password)))

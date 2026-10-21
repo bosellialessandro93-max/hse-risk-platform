@@ -12,7 +12,7 @@ import uuid
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
-os.environ.update(json.loads((ROOT/'.local/streamlit-test-env.json').read_text()))
+os.environ.update(json.loads((Path(os.environ.get('HSE_QA_DIR', ROOT/'.local'))/'streamlit-test-env.json').read_text()))
 from streamlit_app import database
 from streamlit_app.gateway import invoke
 config=json.loads(os.environ['HSE_DATABASE']);auth=json.loads(os.environ['HSE_AUTH'])
@@ -150,5 +150,5 @@ try:database.oidc_user(config,{'email':'bad@example.org','email_verified':False}
 except ValueError:check(True,'OIDC unverified email rejection')
 else:raise AssertionError('Unverified identity accepted')
 check(not database.authenticate(config,auth['bootstrap_username'],'incorrect'),'bad password rejected')
-report={'checks':passed,'total':len(passed),'model_cases':357,'scenarios':2142,'database':'external MariaDB 11.4','storage':'InnoDB, no local archive','runtime':'PHP 8.0.30','actors':['admin','manager','reader','company','outsider'],'site_id':sid,'assessment_id':saved['id'],'observation_id':observation['id'],'map_id':map_record['id'],'plan_id':plan['id'],'meeting_id':meeting['id'],'role_users':{role:user['id'] for role,user in users.items()}}
-(ROOT/'.local/streamlit-test-ids.json').write_text(json.dumps(report));(ROOT/'tests/artifacts/streamlit-backend.json').write_text(json.dumps(report,indent=2));print('PASS',len(passed),'Streamlit backend flows; 357 golden cases, 2142 scenarios, all profiles, imports, export snapshots and DB persistence')
+report={'checks':passed,'total':len(passed),'model_cases':357,'scenarios':2142,'database':'external PostgreSQL' if config.get('driver')=='postgresql' else 'external MariaDB 11.4','storage':'external transactional database, no local archive','runtime':os.environ.get('HSE_QA_RUNTIME','PHP 8.0.30'),'actors':['admin','manager','reader','company','outsider'],'site_id':sid,'assessment_id':saved['id'],'observation_id':observation['id'],'map_id':map_record['id'],'plan_id':plan['id'],'meeting_id':meeting['id'],'role_users':{role:user['id'] for role,user in users.items()}}
+(Path(os.environ.get('HSE_QA_DIR', ROOT/'.local'))/'streamlit-test-ids.json').write_text(json.dumps(report));(ROOT/'tests/artifacts/streamlit-backend.json').write_text(json.dumps(report,indent=2));print('PASS',len(passed),'Streamlit backend flows; 357 golden cases, 2142 scenarios, all profiles, imports, export snapshots and DB persistence')

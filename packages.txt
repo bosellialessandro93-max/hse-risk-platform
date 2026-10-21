@@ -3,3 +3,4 @@ php-mysql
 php-mbstring
 php-xml
 php-zip
+php-pgsql

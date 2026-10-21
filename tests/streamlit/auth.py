@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 import secrets
 import sys
-ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT));os.environ.update(json.loads((ROOT/'.local/streamlit-test-env.json').read_text()))
+ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT));os.environ.update(json.loads((Path(os.environ.get('HSE_QA_DIR', ROOT/'.local'))/'streamlit-test-env.json').read_text()))
 from streamlit_app import database
 c=json.loads(os.environ['HSE_DATABASE']);auth=json.loads(os.environ['HSE_AUTH']);database.initialize(c,auth)
 admin=database.authenticate(c,auth['bootstrap_username'],auth['bootstrap_password']);assert admin
@@ -30,7 +30,7 @@ with database.connection(c) as db,db.cursor() as cur:
 report={'native_accounts':True,'pbkdf2_600000':True,'own_password_change':True,'admin_password_reset':True,'session_version_revocation':True,'five_failures_lock_account':True,'disabled_account_rejected':True,'privilege_escalation_rejected':True}
 (ROOT/'tests/artifacts/streamlit-auth.json').write_text(json.dumps(report,indent=2));print('PASS native accounts, PBKDF2, password change/reset, session revocation versions, rate limiting and disabled-user rejection')
 # Prepare actual existing native actors for role browser checks.
-ids=json.loads((ROOT/'.local/streamlit-test-ids.json').read_text());creds={}
+ids=json.loads((Path(os.environ.get('HSE_QA_DIR', ROOT/'.local'))/'streamlit-test-ids.json').read_text());creds={}
 for role,uid in ids['role_users'].items():
     p=secrets.token_urlsafe(24);database.manage_users(c,admin,update={'id':uid,'password':p});row=database.get_user(c,uid);creds[role]={'username':row['username'],'password':p}
-p=ROOT/'.local/streamlit-role-auth.json';p.write_text(json.dumps(creds));p.chmod(0o600)
+p=Path(os.environ.get('HSE_QA_DIR', ROOT/'.local'))/'streamlit-role-auth.json';p.write_text(json.dumps(creds));p.chmod(0o600)

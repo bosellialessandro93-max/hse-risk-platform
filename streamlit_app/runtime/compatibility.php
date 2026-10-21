@@ -22,7 +22,7 @@ function is_ssl(){return getenv('HSE_TLS_ORIGIN')!=='0';}
 function get_bloginfo($field){return 'Streamlit standalone (WordPress non richiesto)';}
 function wp_max_upload_size(){return 15*1024*1024;}
 function register_rest_route(...$ignored){}
-function dbDelta($sql){global $wpdb;$sql=preg_replace('/^CREATE TABLE /','CREATE TABLE IF NOT EXISTS ',$sql);if($wpdb->query($sql)===false)throw new RuntimeException('Database schema unavailable');}
+function dbDelta($sql){global $wpdb;$sql=preg_replace('/^CREATE TABLE /','CREATE TABLE IF NOT EXISTS ',$sql);if($wpdb instanceof HSE_PG_DB){$wpdb->migrate($sql);return;}if($wpdb->query($sql)===false)throw new RuntimeException('Database schema unavailable');}
 class WP_Error {
  public $code;public $message;public $data;
  function __construct($code,$message,$data=[]){$this->code=$code;$this->message=$message;$this->data=$data;}
