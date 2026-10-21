@@ -20,11 +20,32 @@ def settings(secrets):
     section = secrets.get('gemini', {})
     return {
         'enabled': section.get('enabled') is True,
-        'api_key': section.get('api_key', ''),
+        'api_key': section.get('api_key') or secrets.get('GEMINI_API_KEY')
+            or secrets.get('GOOGLE_API_KEY') or secrets.get('Gemini API Key', ''),
         'model': section.get('model', 'gemini-2.5-flash'),
         'confidential_authorized': section.get('processing_authorized') is True
             and section.get('allow_confidential_data') is True,
     }
+
+
+def status(secrets):
+    """Configuration metadata only; never return a credential to the component."""
+    config = settings(secrets)
+    present = isinstance(config['api_key'], str) and bool(config['api_key'].strip())
+    return {'enabled': config['enabled'], 'key_present': present,
+            'ready': config['enabled'] and present,
+            'confidential_authorized': config['confidential_authorized']}
+
+
+def dispatch(secrets, data):
+    if not isinstance(data, dict):
+        raise AssistanceUnavailable('Richiesta assistente non valida.')
+    if data.get('operation') == 'status':
+        return status(secrets)
+    if data.get('operation') != 'generate':
+        raise AssistanceUnavailable('Operazione assistente non valida.')
+    return {'text': assist(secrets, task=data.get('task'), text=data.get('text'),
+                           classification=data.get('classification'), consent=data.get('consent'))}
 
 
 def assist(secrets, *, task, text, classification, consent):

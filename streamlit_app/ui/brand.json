@@ -1,1 +1,10 @@
-{}
+{
+  "logo": {
+    "file": "hse-brand-mark.webp",
+    "alt": "HSE Risk Index"
+  },
+  "home": {
+    "file": "hse-energy-hero.webp",
+    "alt": "Scena illustrativa: referenti HSE, turbine eoliche, pannelli solari e sistemi di accumulo"
+  }
+}
