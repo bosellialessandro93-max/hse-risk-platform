@@ -1,0 +1,97 @@
+/* Streamlit-only industrial HSE tokens; no WordPress assets are modified. */
+.hse-platform {
+ --bg:#f3f6fa;--ink:#152b43;--nav:#10263d;--action:#1457b8;--accent:#087c80;
+ --line:#d2dce7;--muted:#4c6277;--safety:#176b47;--visibility:#ffb347;
+ font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif;
+ padding:24px;max-width:1720px;letter-spacing:0;
+}
+.hse-platform h2{font-size:clamp(1.5rem,2.6vw,2rem);letter-spacing:-.035em;font-weight:750;margin:14px 0 24px}
+.hse-platform h3{letter-spacing:-.015em;font-weight:700}
+.hse-platform .app-header{border-radius:12px;background:var(--nav);border-top:4px solid var(--visibility);padding:26px 30px}
+.hse-platform .app-header h1{font-size:1.65rem;letter-spacing:-.04em}
+.hse-platform .app-header p{color:#d8e6f3;font-size:.95rem}
+.hse-platform #hse-site{background:white;border:1px solid var(--line);border-radius:12px;padding:16px 20px;gap:16px;margin:18px 0 24px}
+.hse-platform #hse-site>label{flex:1 1 260px;max-width:560px;font-size:.82rem;font-weight:700;color:var(--muted)}
+.hse-platform #hse-site select{color:var(--ink);font-size:1rem;font-weight:650}
+.hse-platform .badge{background:#e8f2f5;border:1px solid #a9c9d2;color:#174b59;border-radius:6px;font-size:.8rem;font-weight:650;padding:6px 10px}
+.hse-platform #hse-nav{gap:4px}
+.hse-platform #hse-nav button{border-radius:7px;background:transparent;color:var(--muted);padding:11px 14px;font-size:.88rem;font-weight:550}
+.hse-platform #hse-nav button:hover{background:#e1eaf5;color:var(--action)}
+.hse-platform #hse-nav button[aria-current=page]{background:var(--nav);color:white;box-shadow:inset 4px 0 #32c6b7;font-weight:700}
+.hse-platform .breadcrumb{font-size:.8rem;margin-bottom:8px;color:var(--muted)}
+.hse-platform .hero{background:var(--nav);padding:32px;border:1px solid #263f58;border-radius:14px;gap:28px}
+.hse-platform .hero h3{font-size:clamp(1.55rem,2.7vw,2.35rem);letter-spacing:-.035em}
+.hse-platform .hero .eyebrow{color:#8ce3d5;letter-spacing:.12em;font-size:.75rem}
+.hse-platform .hero .toolbar button{border-color:#829cb7}
+.hse-platform .hero .toolbar button.primary{background:#ffb347;border-color:#ffb347;color:#172b42}
+.hse-platform .hero .toolbar button.primary:hover{background:#ffca80}
+.hse-platform .hero-technologies{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.hse-platform .hero-technologies>div{min-width:0;position:relative}
+.hse-platform .hero-technologies img{aspect-ratio:1/1;object-fit:cover;border-radius:8px;opacity:.9}
+.hse-platform .hero-technologies span{display:block;font-weight:650;font-size:.85rem;margin-top:8px;color:white}
+.hse-platform .card{border-radius:12px;border-color:var(--line);box-shadow:0 2px 8px #10263d05;margin:16px 0;padding:24px}
+.hse-platform .technology-card{padding:0 0 20px;border-top:3px solid var(--accent)}
+.hse-platform .technology-card[data-technology=Wind]{border-top-color:var(--action)}
+.hse-platform .technology-card[data-technology=Solar]{border-top-color:#b96b08}
+.hse-platform .technology-card[data-technology=BESS]{border-top-color:var(--safety)}
+.hse-platform .technology-card img{max-height:170px;object-fit:cover}
+.hse-platform .kpi{position:relative;border-top:3px solid var(--accent)}
+.hse-platform .kpi h3{font-size:.95rem;color:var(--muted)}
+.hse-platform .kpi-value{font-size:2.6rem;font-variant-numeric:tabular-nums;letter-spacing:-.05em;color:var(--ink);margin:12px 0}
+.hse-platform .kpi p:not(.kpi-value){font-size:.85rem;color:var(--muted)}
+.hse-platform .journey{border-left:3px solid var(--safety);background:#fafffd}
+.hse-platform .journey li::marker{color:var(--safety);font-weight:750}
+.hse-platform button{border-color:#8da1b5;border-radius:7px;font-size:.94rem;transition:background-color .12s,border-color .12s}
+.hse-platform button.primary{background:var(--action);border-color:var(--action)}
+.hse-platform button.primary:hover{background:#104794}
+.hse-platform button[aria-busy=true]{cursor:progress;opacity:.7}
+.hse-platform input,.hse-platform select,.hse-platform textarea{border-color:#8da1b5;border-radius:7px;line-height:1.45}
+.hse-platform label{font-size:.94rem;font-weight:550}
+.hse-platform label small{font-weight:400}
+.hse-platform :focus-visible{outline:3px solid #0c70cc;outline-offset:3px}
+.hse-platform nav :focus-visible,.hse-platform .hero :focus-visible{outline-color:#ffb347}
+.hse-platform .notice{background:#eaf5f3;color:#164f4b;border:1px solid #9fc7c1;border-left:4px solid var(--accent);border-radius:8px}
+.hse-platform .error{background:#fff1ee;color:#8f2218;border:1px solid #ddafa7;border-left:4px solid #b42318;border-radius:8px}
+.hse-platform .risk-kpis{background:#edf4fc;border:1px solid #b9cfe8;border-radius:10px;padding:24px}
+.hse-platform .risk-kpis strong{font-variant-numeric:tabular-nums}
+.hse-platform .risk-kpis .risk-value{font-size:3.2rem;letter-spacing:-.04em}
+.hse-platform .export-heading{border-top:1px solid var(--line);padding-top:22px;color:var(--action)}
+.hse-platform table{border-collapse:separate;border-spacing:0;font-size:.9rem}
+.hse-platform th{background:#e9eff6;color:#203b55;font-size:.84rem}
+.hse-platform td{border-color:#dce4ed;vertical-align:top}
+.hse-platform tbody tr:nth-child(even){background:#f7f9fc}
+.hse-platform summary{color:var(--ink);font-size:.95rem}
+.hse-platform .scroll{border:1px solid var(--line);border-radius:8px}
+.hse-platform svg{max-width:100%}
+.hse-platform .empty-state{padding:40px 24px;border-style:dashed;background:#fcfdff}
+.hse-platform [data-image-slot]{object-fit:cover}
+@media(min-width:1200px){
+ .hse-app-page .hse-platform{grid-template-columns:215px minmax(0,1fr);gap:0 26px}
+ .hse-app-page .hse-platform>#hse-nav{border-right:1px solid var(--line);padding:0 16px 12px 0}
+}
+@media(max-width:767px){
+ .hse-platform{padding:12px}
+ .hse-platform .app-header{padding:20px}
+ .hse-platform .app-header h1{font-size:1.4rem}
+ .hse-platform #hse-site{padding:14px;gap:12px}
+ .hse-platform .hero{padding:22px}
+ .hse-platform .hero-technologies{gap:8px}
+ .hse-platform .hero-technologies img{max-height:110px}
+ .hse-platform .card{padding:20px}
+ .hse-platform .technology-card{padding:0 0 20px}
+ .hse-platform .risk-kpis{padding:16px}
+}
+@media(prefers-reduced-motion:reduce){.hse-platform *{transition:none!important;scroll-behavior:auto!important}}
+.hse-platform .approved-reference{display:block;width:100%;max-height:360px;object-fit:contain;border-radius:10px;margin:16px 0}
+.hse-platform .app-header .approved-reference{width:auto;max-width:220px;max-height:64px;margin:0 0 16px;object-fit:contain}
+/* Breakpoint follows the iframe width, which is narrower than the browser window. */
+@media(min-width:900px){
+ .hse-app-page .hse-platform{display:grid;grid-template-columns:190px minmax(0,1fr);gap:0 22px}
+ .hse-app-page .hse-platform>.app-header,.hse-app-page .hse-platform>#hse-message,.hse-app-page .hse-platform>#hse-site,.hse-app-page .hse-platform>.skip-link:focus{grid-column:1/-1}
+ .hse-app-page .hse-platform>#hse-nav{grid-column:1;display:grid;grid-template-columns:1fr;align-content:start;align-self:start;position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto;margin:0;border-right:1px solid var(--line);padding:0 14px 12px 0}
+ .hse-app-page .hse-platform>#hse-body{grid-column:2;min-width:0}
+ .hse-platform .hero{grid-template-columns:1fr;padding:26px}
+ .hse-platform .hero-technologies{max-width:340px}
+ .hse-platform .hero-technologies img{aspect-ratio:2/1;max-height:85px}
+}
+@media(min-width:1400px){.hse-platform .hero{grid-template-columns:3fr 2fr}.hse-platform .hero-technologies{max-width:none}}

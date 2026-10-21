@@ -10,6 +10,8 @@ import streamlit.components.v1 as components
 from streamlit_app import database
 from streamlit_app.configuration import database_configuration
 from streamlit_app.gateway import invoke
+from streamlit_app.assistant_ui import render as render_assistant
+from streamlit_app.branding import show_brand
 
 st.set_page_config(page_title='HSE Risk Platform', page_icon='🛡️', layout='wide')
 ROOT = Path(__file__).resolve().parent
@@ -53,6 +55,7 @@ except Exception:
 
 if auth.get('mode', 'password') == 'oidc':
     if not st.user.is_logged_in:
+        show_brand('profiles')
         st.title('HSE Risk Platform')
         st.write('Accedi con il tuo account aziendale.')
         if st.button('Accedi', type='primary'):
@@ -73,6 +76,7 @@ else:
         st.session_state.clear()
         actor = None
     if not actor:
+        show_brand('profiles')
         st.title('HSE Risk Platform')
         with st.form('login', clear_on_submit=True):
             username = st.text_input('Nome utente', max_chars=254)
@@ -116,7 +120,11 @@ with st.sidebar:
                         st.success('Password aggiornata; le altre sessioni dovranno accedere nuovamente.')
                     except ValueError as error:
                         st.error(str(error))
-    page = st.radio('Spazio di lavoro', ['Piattaforma', 'Account utenti'] if actor['is_admin'] else ['Piattaforma'], label_visibility='collapsed')
+    page = st.radio('Spazio di lavoro', ['Piattaforma', 'Account utenti', 'Assistenza AI'] if actor['is_admin'] else ['Piattaforma', 'Assistenza AI'], label_visibility='collapsed')
+
+if page == 'Assistenza AI':
+    render_assistant()
+    st.stop()
 
 if page == 'Account utenti':
     st.title('Account utenti')
@@ -165,9 +173,8 @@ try:
             if re.fullmatch(r'[0-9a-fA-F-]{36}', selected) and st.query_params.get('hse_site') != selected:
                 st.query_params['hse_site'] = selected
             # Actor always comes from the authenticated server session, never component data.
-            actor = database.get_user(config, actor['id'])
-            if not actor:
-                stop_error('Account non più attivo. Accedi nuovamente.')
+            # Already revalidated (including token_version) at the beginning of this run.
+            # Do not open a second Neon connection for the same request.
             result = invoke(config, actor, request=request)
         except (ValueError, RuntimeError) as error:
             result = {'error': {'message': str(error), 'status': 503}}

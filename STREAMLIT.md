@@ -117,3 +117,35 @@ HSE_QA_DIR=.local/streamlit-postgres-qa node tests/streamlit/browser.mjs
 ```
 
 Il runner genera un prefisso isolato e credenziali amministrative casuali, conservate solo nella directory ignorata `.local/streamlit-postgres-qa`. Non stampa la URL/password. Per un browser in un percorso diverso: `HSE_CHROMIUM_PATH=/percorso/chromium`. I dati sintetici restano nel solo database di collaudo per le verifiche browser. La suite comprende gli stessi 39 flussi backend, 357 modelli/2.142 scenari, autenticazione/sessioni e controlli PostgreSQL di concorrenza, rollback e binari; non è un test del provider OIDC o della console Neon.
+
+## Ottimizzazioni e design Streamlit (ottobre 2026)
+
+Il componente carica export Office/PDF, PDF.js e Tesseract solo quando necessari. `npm run build` produce ora moduli ES e chunk locali versionati: distribuire l'intera cartella `streamlit_app/frontend`, non il solo `app.bundle.js`. Il builder mantiene invariati gli asset e i moduli WordPress; interrompe la build se cambiano i confini principali dell'adattamento.
+
+Il bridge raggruppa fino a 16 letture adiacenti nello stesso passaggio Streamlit e nello stesso processo PHP/connessione DB. Ogni sottorichiesta passa ancora dalle autorizzazioni originali. Le scritture restano singole e mantengono ordine, idempotenza e controllo delle revisioni. La condivisione di GET identiche vale solo mentre sono in corso: nessuna nuova cache persistente di dati o permessi. I contatori dashboard richiedono il totale e un solo record, evitando di trasportare al browser l'intero archivio. L'account viene ricontrollato a ogni esecuzione Streamlit; è stata rimossa soltanto la seconda interrogazione identica nello stesso run.
+
+Il tema industriale è circoscritto al componente Streamlit: navy, blu tecnico, teal, verde sicurezza, arancione visibilità e grigi chiari. Si applica a dashboard, moduli, calendario, documenti, mappe, storico ed export. La navigazione tiene conto della larghezza dell'iframe. I ruoli esistenti determinano i moduli accessibili. Nessun dato o comando dimostrativo viene introdotto nel prodotto. Gli slot per logo e riferimenti futuri sono descritti in `streamlit_app/ui/README.md`; il manifest vuoto mantiene le illustrazioni già esistenti.
+
+Misure ripetibili e limiti: [docs/STREAMLIT_IMPROVEMENTS_QA.json](docs/STREAMLIT_IMPROVEMENTS_QA.json). Su cinque sessioni Chromium nuove in locale, mediana login→dashboard completa **2.691 → 1.249 ms**, passaggi bridge **8 → 4**, JavaScript iniziale **3.571.820 → 88.051 byte**. Ritorno alla panoramica **754 → 201 ms**; le altre navigazioni rimangono circa 187–205 ms, con variazioni in entrambe le direzioni. Sono misure su dati sintetici e PostgreSQL locale: non rappresentano latenza, cold start o carico del Neon/Streamlit Cloud aziendale. Nessuna connessione o scrittura sul database reale è stata effettuata.
+
+Con un database QA dedicato e il runtime documentato:
+
+```sh
+HSE_QA_DIR=.local/streamlit-postgres-qa python tests/streamlit/batch.py
+python tests/streamlit/gemini.py
+node tests/streamlit/bridge.mjs
+HSE_QA_DIR=.local/streamlit-postgres-qa node tests/streamlit/performance.mjs
+HSE_QA_DIR=.local/streamlit-postgres-qa node tests/streamlit/design-qa.mjs
+HSE_QA_DIR=.local/streamlit-postgres-qa node tests/streamlit/roles.mjs
+HSE_QA_DIR=.local/streamlit-postgres-qa HSE_QA_PYTHON=python node tests/streamlit/accounts-ui.mjs
+```
+
+Il benchmark usa cinque contesti browser nuovi; `HSE_PERF_OUTPUT` seleziona il file di risultato. Eseguire prima la suite PostgreSQL e avviare il server QA come sopra. Le credenziali sintetiche restano nei file ignorati. I controlli axe automatici non costituiscono certificazione WCAG; i riferimenti grafici approvati, il test con screen reader e le misure sulla produzione restano separati.
+
+## Assistenza opzionale Google Gemini
+
+La voce **Assistenza AI** non legge automaticamente record, documenti o dati Neon. Supporta analisi NC, lettura di estratti documentali, spiegazione dei risultati forniti e raccomandazioni da verificare. L'utente incolla il testo, dichiara la classificazione e conferma esplicitamente ogni invio. Le risposte sono testo da rivedere: non cambiano dati, permessi o Risk Index e non vengono registrate automaticamente.
+
+Aggiungere esclusivamente nei **Secrets Streamlit** la sezione del modello `.streamlit/secrets.gemini.toml.example`, inserendo lì la chiave reale. Nessuna lettura di `GEMINI_API_KEY` dall'ambiente o dal browser. La chiave viene inviata lato server nell'header HTTPS verso `generativelanguage.googleapis.com`; non compare in URL, log, frontend o messaggi d'errore. Per attivare sui soli dati pubblici/sintetici impostare `enabled = true` e scegliere un modello disponibile nel proprio account. Il provider richiede rete, chiave e quota valide; il collaudo di questo intervento usa risposte simulate, non una chiamata reale.
+
+Lasciare `processing_authorized` e `allow_confidential_data` a `false`: i dati riservati restano bloccati anche se Gemini è attivato. Le due impostazioni possono essere abilitate soltanto dopo verifica delle autorizzazioni e delle condizioni di trattamento, fuori da questo intervento. Nessuna verifica legale o autorizzazione viene dedotta dall'esistenza di una chiave. Non inserire segreti nella chat o nei file versionati.
