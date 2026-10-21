@@ -88,7 +88,7 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Per ricompilare il solo componente: `npm ci && node tools/build-streamlit.mjs`. Il build legge gli asset originali e sostituisce solo il trasporto API e l’etichetta dell’ID account; non modifica i file WordPress. Licenze incluse nel componente.
+Per ricompilare il solo componente: `npm ci && node tools/build-streamlit.mjs`. Il build legge gli asset originali e applica gli adattamenti Streamlit di trasporto, interfaccia, periodi e importazione; non modifica i file WordPress. I moduli PHP adattati sono generati in `streamlit_app/runtime/generated` con sostituzioni controllate; la regione del motore puro Risk Index è verificata identica byte per byte. Licenze incluse nel componente.
 
 QA Linux con i container di test del repository già disponibili (`hse-db`, `hse-wp-php80`), senza caricare WordPress nel runtime standalone:
 
@@ -173,3 +173,23 @@ Service/API versione 4 aggiorna il caricamento differito dopo un deploy a caldo.
 ### Modello non disponibile (404)
 
 In **Assistenza AI**, premere **Carica modelli disponibili**: il server legge l’elenco paginato con la chiave nei Secrets e mostra soltanto modelli Gemini che dichiarano `generateContent`. Scegliere esplicitamente un modello e premere **Verifica collegamento**, poi autorizzare l’invio del testo. Nessun modello viene scelto automaticamente; la selezione vale nella pagina corrente e non modifica i Secrets. La lettura dell’elenco non invia documenti o dati aziendali. Elenco vuoto, quota o restrizioni restano condizioni del progetto Google; nessun fallback automatico.
+
+## Valutazioni settimanali, importazione sinottico e paesaggio KMZ
+
+La voce di navigazione e il titolo sono **Valutazione Risk Index**. Le nuove valutazioni richiedono il lunedì di una settimana già iniziata: periodo lunedì–domenica, massimo sette giorni operativi. Controlli server, hash di calcolo, storico, confronto di settimane concluse, snapshot calendario ed export seguono questo periodo anche a cavallo di mese/anno. Il campo tecnico `month` rimane derivato per compatibilità; non identifica né raggruppa le nuove valutazioni. Le pubblicazioni mensili storiche conservano risultati e revisioni, restano consultabili in un gruppo separato e non vengono convertite o confrontate con settimane. Il ripristino dei backup mensili continua a funzionare. Le segnalazioni riutilizzate richiedono una data esplicita per il controllo settimanale; gli eventi storici senza data non vengono assegnati a una settimana per supposizione. Gli incontri collegati devono cadere nel periodo.
+
+**Formule, pesi e coefficienti 2.0.0 invariati.** Il valore del target ispettivo già configurato viene conservato, senza dividerlo automaticamente per quattro. La politica settimanale ha un identificativo distinto: l’amministratore può verificare/aggiornare il target comune per periodo in Archivio e impostazioni. I risultati già salvati conservano il proprio snapshot di politica. Non viene migrato né eliminato alcun archivio Neon.
+
+In **Sinottici impresa → Carica immagine sinottico**, selezionare JPEG, PNG o PDF e premere **Compila automaticamente da immagine**, quindi **Rivedi lista compilata**. L’OCR italiano gira nel browser con worker locali. Il riconoscimento di intestazioni Attività/Descrizione e Preposto propone i campi effettivi (POS, mezzi, contatti, affidataria/esecutrice, condizioni e operatori per date esplicite quando leggibili). Date mancanti, aree da associare, flag di verifica e informazioni non riconosciute restano da completare; il sistema non inventa valori. Per layout senza intestazioni riconoscibili resta la mappatura manuale. La lista permette correzioni, esclusioni e confronto con le celle sorgente prima di portare le righe nella bozza. Confermare la selezione non salva né pubblica: occorrono settimana, impresa e salvataggio espliciti, poi la conferma del sinottico. La fonte non viene inviata a Gemini né archiviata come allegato automaticamente. Limiti invariati: 15 MB, cinque pagine, 20 megapixel per pagina; accuratezza da verificare sui sinottici effettivi.
+
+In **Mappa KMZ**, il selettore **Layout mappa** offre **Light** e **Paesaggio incorporato nel KMZ**. Sono supportati `GroundOverlay` con immagini PNG/JPEG realmente presenti nell’archivio e `LatLonBox` WGS84, inclusa rotazione. La scelta e le immagini sono persistite nel record e nei backup, e incluse negli export PNG/PDF. Massimo otto raster, 12 MB complessivi e 20 megapixel ciascuno. Il paesaggio non è disponibile se il file contiene solo vettori o rimandi esterni: la vista satellite mostrata da Google Earth non è necessariamente inclusa nel KMZ. Nessun download esterno; modelli 3D, ScreenOverlay, quad e attraversamento antimeridiano restano esclusi con avviso. L’export KML mantiene il comportamento vettoriale con stile semplificato, senza raster.
+
+Collaudo locale PostgreSQL/PHP: 39 flussi backend, 357 casi modello e 2.142 scenari; controlli dedicati di settimana/mese/anno, giorni, eventi, hash, storico, confronto, ripristino mensile, importazione overlay-only e immagini non valide; browser con OCR italiano reale, revisione prima del salvataggio, cambio layout ed export raster; suite browser completa con tutti gli export, foto, riunioni, responsive/axe e persistenza dopo accesso; test PostgreSQL di concorrenza/rollback; regressioni Gemini e avvio. Comandi aggiuntivi:
+
+```sh
+node tests/streamlit/synoptic-inference.mjs
+HSE_QA_DIR=.local/streamlit-postgres-qa python tests/streamlit/weekly_features.py
+HSE_QA_DIR=.local/streamlit-postgres-qa node tests/streamlit/weekly-ui.mjs
+```
+
+Eseguire prima la suite backend e avviare il server QA locale come sopra. Tutti i dati e le immagini di collaudo sono sintetici; Neon e console Streamlit di produzione non sono stati contattati per queste verifiche.

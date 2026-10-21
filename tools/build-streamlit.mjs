@@ -1,3 +1,5 @@
+import './build-streamlit-runtime.mjs';
+import {adaptUI,adaptSchemas,adaptMap,adaptExports} from './streamlit-ui-adaptations.mjs';
 import {build} from 'esbuild';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -68,15 +70,19 @@ replaceOnce("nav.append(el('button',{type:'button','aria-current':state.view===v
 replaceOnce("root.dataset.role=companyPath?'company':'hse';", "refreshCorporateHeader(companyPath);root.dataset.screen='view';root.dataset.role=companyPath?'company':'hse';");
 replaceOnce("if(state.view==='sites')return sitesView();", "if(state.view==='ai')return assistantPage();if(state.view==='sites')return sitesView();");
 replaceOnce('async function edit(kind,record){', "async function edit(kind,record){root.dataset.screen='editor';root.dataset.resource=kind;");
+code=adaptUI(code);
 code=fs.readFileSync('streamlit_app/ui/workspace.js','utf8')+'\n'+code;
 const exportsSource=fs.readFileSync(source+'/exports.js','utf8');
 const download=exportsSource.match(/^export function download\(.+$/m)?.[0];
 const ics=exportsSource.match(/^export function ics\(.+$/m)?.[0];
 if(!download||!ics)throw new Error('Lightweight export boundary changed');
 const plugins=[{name:'streamlit-adaptations',setup(builder){
+ builder.onResolve({filter:/^hse-synoptic-auto$/},()=>({path:path.resolve('streamlit_app/ui/synoptic-auto.js')}));
+ builder.onLoad({filter:/\/map\.js$/},args=>({contents:adaptMap(fs.readFileSync(args.path,'utf8')),loader:'js'}));
+ builder.onLoad({filter:/exports\.js$/},args=>({contents:adaptExports(fs.readFileSync(args.path,'utf8')),loader:'js'}));
  builder.onResolve({filter:/^hse-light-downloads$/},()=>({path:'light-downloads',namespace:'hse'}));
  builder.onLoad({filter:/.*/,namespace:'hse'},()=>({contents:"const clean=s=>String(s??'Dato non disponibile');\n"+download+'\n'+ics,loader:'js'}));
- builder.onLoad({filter:/schemas\.js$/},args=>({contents:fs.readFileSync(args.path,'utf8').replaceAll('ID utente WordPress *','ID account Streamlit *'),loader:'js'}));
+ builder.onLoad({filter:/schemas\.js$/},args=>({contents:adaptSchemas(fs.readFileSync(args.path,'utf8').replaceAll('ID utente WordPress *','ID account Streamlit *')),loader:'js'}));
  builder.onLoad({filter:/importer\.js$/},args=>{
   let contents=fs.readFileSync(args.path,'utf8');
   const pdfHeader="import * as pdfjs from 'pdfjs-dist/legacy/build/pdf.mjs';\npdfjs.GlobalWorkerOptions.workerSrc=HSE_CONFIG.assets+'vendor/pdf.worker.min.mjs';";

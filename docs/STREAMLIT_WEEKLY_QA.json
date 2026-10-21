@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-21",
+  "scope": "Streamlit only; WordPress assets/includes and main unchanged",
+  "database": "dedicated local PostgreSQL, synthetic data only",
+  "build": "passed",
+  "backend_flows": 39,
+  "model_cases": 357,
+  "independent_scenarios": 2142,
+  "pure_risk_engine_byte_identical": true,
+  "weekly_checks": ["Monday validation", "future week rejected", "seven operational days maximum", "month/year boundary", "week included in input hash", "distinct weeks retained in history", "explicit event dates", "concluded week comparison", "legacy monthly result snapshot unchanged", "legacy backup restore"],
+  "image_import": {"provider": "local Tesseract Italian WASM", "browser_ocr_rows": 2, "editable_fields": ["description", "supervisor", "pos", "days"], "explicit_review": true, "automatic_save": false, "external_ai_transmission": false, "unknown_layout_manual_fallback": true},
+  "kmz": {"embedded_raster": true, "overlay_only": true, "remote_resources_blocked": true, "invalid_images_rejected": true, "persisted_layout_and_images": true, "browser_toggle": true, "png_raster_pixels_verified": true},
+  "existing_browser_suite": "passed: all exports, photos, annotations, meeting, map, Italian OCR, PDF import, responsive/axe, relogin persistence",
+  "postgres_concurrency_and_rollback": "passed",
+  "gemini_regressions": 12,
+  "startup_regressions": 3,
+  "production_runtime_verified": false,
+  "limits": ["OCR must be reviewed on real documents", "KMZ must embed PNG/JPEG GroundOverlay with supported LatLonBox; external satellite/3D/quad unsupported", "inspection target retained without automatic scaling; weekly policy distinguished", "automated accessibility checks are not WCAG certification"]
+}
