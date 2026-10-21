@@ -1,9 +1,9 @@
 """Opt-in, server-only Gemini assistance. No database reads or automatic submissions."""
 import json
 import re
-from urllib import error, request
+from urllib import error, request, parse
 
-ASSISTANT_API_VERSION = 3
+ASSISTANT_API_VERSION = 4
 
 TASKS = {
     'Analisi NC': 'Analizza la non conformità descritta e distingui fatti, informazioni mancanti e ipotesi.',
@@ -36,6 +36,7 @@ def status(secrets):
     present = isinstance(config['api_key'], str) and bool(config['api_key'].strip())
     return {'enabled': config['enabled'], 'key_present': present,
             'ready': config['enabled'] and present,
+            'model': config['model'] if isinstance(config['model'], str) and re.fullmatch(r'gemini-[a-zA-Z0-9.-]{1,80}', config['model']) else '',
             'confidential_authorized': config['confidential_authorized']}
 
 
@@ -45,11 +46,13 @@ def dispatch(secrets, data):
     if data.get('operation') == 'status':
         return status(secrets)
     if data.get('operation') == 'check_connection':
-        return check_connection(secrets)
+        return check_connection(secrets, model=data.get('model'))
+    if data.get('operation') == 'list_models':
+        return list_models(secrets)
     if data.get('operation') != 'generate':
         raise AssistanceUnavailable('Operazione assistente non valida.')
     return {'text': assist(secrets, task=data.get('task'), text=data.get('text'),
-                           classification=data.get('classification'), consent=data.get('consent'))}
+                           classification=data.get('classification'), consent=data.get('consent'), model=data.get('model'))}
 
 
 def provider_error(exc):
@@ -76,7 +79,7 @@ def provider_error(exc):
     if exc.code == 429:
         return 'Google ha raggiunto il limite di richieste o la quota disponibile (HTTP 429). Attendi prima di riprovare e verifica quota e piano del progetto in Google AI Studio.'
     if exc.code == 404:
-        return 'Il modello configurato non è disponibile per questa API (HTTP 404). Imposta gemini.model nei Secrets su un modello disponibile nel tuo progetto e compatibile con generateContent.'
+        return 'Il modello configurato non è disponibile per questa API (HTTP 404). Premi «Carica modelli disponibili» e seleziona un modello compatibile con generateContent prima di riprovare.'
     if exc.code == 400:
         return 'Google ha rifiutato la richiesta (HTTP 400). Verifica la configurazione della chiave e che il modello supporti generateContent.'
     if 500 <= exc.code <= 599:
@@ -112,11 +115,11 @@ def provider_json(req):
         raise AssistanceUnavailable('Google ha restituito una risposta non leggibile. Riprova più tardi.') from None
 
 
-def provider_configuration(secrets):
+def provider_configuration(secrets, model=None):
     config = settings(secrets)
     if not config['enabled']:
         raise AssistanceUnavailable('Assistenza Gemini disattivata.')
-    key, model = config['api_key'], config['model']
+    key, model = config['api_key'], config['model'] if model is None else model
     if not isinstance(key, str) or not key.strip():
         raise AssistanceUnavailable('Configurare la chiave Gemini nei Secrets Streamlit.')
     key = key.strip()
@@ -124,21 +127,54 @@ def provider_configuration(secrets):
         raise AssistanceUnavailable('La chiave API contiene spazi o ritorni a capo. Correggila esclusivamente nei Secrets Streamlit.')
     if not isinstance(model, str) or not re.fullmatch(r'gemini-[a-zA-Z0-9.-]{1,80}', model):
         raise AssistanceUnavailable('Modello Gemini non valido.')
-    return {**config, 'api_key': key}
+    return {**config, 'api_key': key, 'model': model}
 
 
-def check_connection(secrets):
-    config = provider_configuration(secrets)
+def list_models(secrets):
+    """Explicit metadata request only; never select a model or send user content."""
+    # An invalid configured model must not prevent discovering a usable one.
+    config = provider_configuration(secrets, 'gemini-metadata')
+    models, seen, token = [], set(), None
+    for _ in range(10):
+        query = {'pageSize': 100}
+        if token:
+            query['pageToken'] = token
+        req = request.Request('https://generativelanguage.googleapis.com/v1beta/models?' + parse.urlencode(query),
+                              headers={'x-goog-api-key': config['api_key']}, method='GET')
+        result = provider_json(req)
+        entries = result.get('models', [])
+        if not isinstance(entries, list):
+            raise AssistanceUnavailable('Elenco modelli Google non leggibile.')
+        for entry in entries:
+            if not isinstance(entry, dict):
+                continue
+            name = entry.get('name', '')
+            methods = entry.get('supportedGenerationMethods', [])
+            if isinstance(name, str) and re.fullmatch(r'models/gemini-[a-zA-Z0-9.-]{1,80}', name) and isinstance(methods, list) and 'generateContent' in methods:
+                name = name.removeprefix('models/')
+                if name not in seen:
+                    models.append(name)
+                    seen.add(name)
+        token = result.get('nextPageToken')
+        if not token:
+            return {'models': sorted(models)}
+        if not isinstance(token, str) or len(token) > 4096:
+            raise AssistanceUnavailable('Paginazione modelli Google non valida.')
+    raise AssistanceUnavailable('Elenco modelli troppo esteso: impossibile completare la verifica.')
+
+
+def check_connection(secrets, model=None):
+    config = provider_configuration(secrets, model)
     req = request.Request('https://generativelanguage.googleapis.com/v1beta/models/' + config['model'],
                           headers={'x-goog-api-key': config['api_key']}, method='GET')
     result = provider_json(req)
     methods = result.get('supportedGenerationMethods')
     if not isinstance(methods, list) or 'generateContent' not in methods:
-        raise AssistanceUnavailable('Il modello selezionato non dichiara il supporto a generateContent. Scegli un modello compatibile nei Secrets Streamlit.')
+        raise AssistanceUnavailable('Il modello selezionato non dichiara il supporto a generateContent. Carica i modelli disponibili e scegli un modello compatibile.')
     return {'message': 'Accesso al modello verificato. Nessun testo o documento è stato inviato. La generazione resta soggetta alla quota Google disponibile.'}
 
 
-def assist(secrets, *, task, text, classification, consent):
+def assist(secrets, *, task, text, classification, consent, model=None):
     config = settings(secrets)
     if not config['enabled']:
         raise AssistanceUnavailable('Assistenza Gemini disattivata.')
@@ -150,7 +186,7 @@ def assist(secrets, *, task, text, classification, consent):
         raise AssistanceUnavailable('Invio di dati riservati disattivato: autorizzazioni e trattamento non verificati.')
     if task not in TASKS or not isinstance(text, str) or not text.strip() or len(text) > 20000:
         raise AssistanceUnavailable('Seleziona un’attività e inserisci da 1 a 20.000 caratteri.')
-    config = provider_configuration(secrets)
+    config = provider_configuration(secrets, model)
     key, model = config['api_key'], config['model']
     payload = {
         'systemInstruction': {'parts': [{'text': 'Sei un assistente HSE. Rispondi in italiano. '

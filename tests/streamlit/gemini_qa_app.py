@@ -13,6 +13,9 @@ def fake(req,timeout):
  mode=root/'.local/gemini-qa-error-code.txt'
  if mode.exists() and mode.read_text().strip()=='429':
   raise HTTPError(req.full_url,429,'private-provider-error',{},io.BytesIO(json.dumps({'error':{'message':'qa-synthetic-key-never-a-real-credential private-provider-error','status':'RESOURCE_EXHAUSTED'}}).encode()))
+ if '/models?' in req.full_url:
+  return io.BytesIO(json.dumps({'models':[{'name':'models/gemini-available-test','supportedGenerationMethods':['generateContent']},{'name':'models/gemini-embedding-test','supportedGenerationMethods':['embedContent']}]}).encode())
+ if '/gemini-available-test' not in req.full_url: raise AssertionError('Explicit model selection was not forwarded')
  result={'supportedGenerationMethods':['generateContent']} if req.get_method()=='GET' else {'candidates':[{'content':{'parts':[{'text':'Analisi sintetica di collaudo. Verificare le evidenze prima di agire.'}]}}]}
  return io.BytesIO(json.dumps(result).encode())
 with patch.object(gemini.request,'urlopen',side_effect=fake):
