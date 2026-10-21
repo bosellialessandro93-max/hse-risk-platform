@@ -10,9 +10,8 @@ import streamlit.components.v1 as components
 from streamlit_app import database
 from streamlit_app.configuration import database_configuration
 from streamlit_app.gateway import invoke
-from streamlit_app.assistant_ui import render as render_assistant
 from streamlit_app.branding import show_brand
-from streamlit_app.gemini import dispatch as dispatch_assistant
+from streamlit_app.assistant_service import dispatch as dispatch_assistant
 
 st.set_page_config(page_title='HSE Risk Index', page_icon='🛡️', layout='wide', initial_sidebar_state='collapsed')
 st.html('''<style>
@@ -164,7 +163,11 @@ if page == 'Profilo':
     st.stop()
 
 if page == 'Assistenza AI':
-    render_assistant()
+    try:
+        from streamlit_app.assistant_ui import render as render_assistant
+        render_assistant()
+    except (ImportError, SyntaxError):
+        st.error('Assistenza AI temporaneamente non disponibile. Torna alla piattaforma o riavvia l’app Streamlit.')
     st.stop()
 
 if page == 'Account utenti':
