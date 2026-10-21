@@ -3,6 +3,8 @@ import json
 import re
 from urllib import error, request
 
+ASSISTANT_API_VERSION = 2
+
 TASKS = {
     'Analisi NC': 'Analizza la non conformità descritta e distingui fatti, informazioni mancanti e ipotesi.',
     'Lettura documenti': 'Riassumi il testo fornito, citando solo riferimenti presenti e segnalando le lacune.',
