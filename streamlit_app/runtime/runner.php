@@ -11,6 +11,18 @@ try{
  if(($input['action']??'')==='calculate_model'){$models=$input['model'];$calculate=function($model){$value=HSE_Risk::calculate($model);$value['scenarios']=HSE_Risk::scenarios($model,$value);return $value;};echo wp_json_encode(['data'=>isset($models[0])?array_map($calculate,$models):$calculate($models)]);exit;}
  $config=json_decode(getenv('HSE_DATABASE'),true,512,JSON_THROW_ON_ERROR);$wpdb=($config['driver']??'mysql')==='postgresql'?new HSE_PG_DB($config):new HSE_DB($config);
  if(($input['action']??'')==='bootstrap'){HSE_Store::activate();echo wp_json_encode(['data'=>['schema'=>get_option('hse_schema')]]);exit;}
+ if(isset($input['requests'])){
+  if(!is_array($input['requests'])||!count($input['requests'])||count($input['requests'])>16)throw new HSE_Fault('Gruppo non valido');
+  $responses=[];
+  foreach($input['requests'] as $read){
+   if(($read['method']??'')!=='GET'||!empty($read['data'])||!empty($read['files'])||!empty($read['form']))throw new HSE_Fault('Solo letture ammesse');
+   try{
+    $result=HSE_API::dispatch(new HSE_Request($read,[]));
+    $responses[]=$result instanceof WP_Error?['id'=>$read['id'],'error'=>['message'=>$result->message,'status'=>$result->data['status']??500,'details'=>$result->data['details']??null]]:array_merge(['id'=>$read['id']],$result->data);
+   }catch(HSE_Fault $e){$responses[]=['id'=>$read['id'],'error'=>['message'=>$e->getMessage(),'status'=>$e->status,'details'=>$e->details]];}
+  }
+  echo wp_json_encode(['data'=>$responses]);exit;
+ }
  $request=$input['request'];if(!in_array($request['method']??'GET',['GET','POST','PATCH','DELETE']))throw new HSE_Fault('Metodo non ammesso');
  if(strlen(wp_json_encode($request))>64*1024*1024)throw new HSE_Fault('Richiesta oltre 64 MB',413);
  $files=[];foreach($request['files']??[] as $key=>$file){$bytes=base64_decode($file['base64']??'',true);if($bytes===false||strlen($bytes)>15*1024*1024)throw new HSE_Fault('File oltre 15 MB o non valido');$path=wp_tempnam('upload');$tmp[]=$path;file_put_contents($path,$bytes);$files[$key]=['name'=>$file['name'],'tmp_name'=>$path,'size'=>strlen($bytes),'error'=>UPLOAD_ERR_OK];}

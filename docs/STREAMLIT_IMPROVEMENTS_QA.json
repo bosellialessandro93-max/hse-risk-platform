@@ -1,0 +1,227 @@
+{
+  "baseline_commit": "4fec0a2ed0256a791bc619870fea6e8310cf4a08",
+  "scope": "Local Chromium + Python 3.12 + Docker PHP 8.3.35 + isolated PostgreSQL 16; not production Neon/Streamlit Cloud",
+  "performance_before": {
+    "context": "Local Chromium, Streamlit and dedicated PostgreSQL; five new browser contexts, no WAN/Neon production measurement",
+    "samples": [
+      {
+        "dashboard_ms": 2846.3911620000003,
+        "dashboard_messages": 8,
+        "js_bytes": 3571820,
+        "scripts": 2,
+        "navigation": {
+          "observations": 200.11511999999948,
+          "plans": 197.51451899999938,
+          "assessments": 198.6143490000004,
+          "calendar": 207.21788000000015,
+          "history": 196.13920899999994,
+          "overview": 786.8369769999999
+        }
+      },
+      {
+        "dashboard_ms": 2203.2940869999993,
+        "dashboard_messages": 8,
+        "js_bytes": 3571820,
+        "scripts": 2,
+        "navigation": {
+          "observations": 174.46881199999916,
+          "plans": 188.8509639999993,
+          "assessments": 186.36660299999858,
+          "calendar": 213.91963699999906,
+          "history": 198.11884199999986,
+          "overview": 753.5867770000004
+        }
+      },
+      {
+        "dashboard_ms": 2681.5295570000017,
+        "dashboard_messages": 8,
+        "js_bytes": 3571820,
+        "scripts": 2,
+        "navigation": {
+          "observations": 205.84897199999978,
+          "plans": 223.8074770000003,
+          "assessments": 200.44156799999837,
+          "calendar": 192.1827720000001,
+          "history": 191.18109600000025,
+          "overview": 753.0011190000005
+        }
+      },
+      {
+        "dashboard_ms": 2690.963641999999,
+        "dashboard_messages": 8,
+        "js_bytes": 3571820,
+        "scripts": 2,
+        "navigation": {
+          "observations": 223.3408930000005,
+          "plans": 212.1382819999999,
+          "assessments": 217.68434200000047,
+          "calendar": 201.6981820000001,
+          "history": 191.91217600000164,
+          "overview": 717.2693690000015
+        }
+      },
+      {
+        "dashboard_ms": 2703.0469900000026,
+        "dashboard_messages": 8,
+        "js_bytes": 3571820,
+        "scripts": 2,
+        "navigation": {
+          "observations": 186.70436100000006,
+          "plans": 194.36873900000137,
+          "assessments": 186.46368000000075,
+          "calendar": 241.58270800000173,
+          "history": 198.90640300000086,
+          "overview": 800.6230269999978
+        }
+      }
+    ],
+    "median": {
+      "dashboard_ms": 2690.963641999999,
+      "dashboard_messages": 8,
+      "initial_js_bytes": 3571820,
+      "navigation_ms": {
+        "observations": 200.11511999999948,
+        "plans": 197.51451899999938,
+        "assessments": 198.6143490000004,
+        "calendar": 207.21788000000015,
+        "history": 196.13920899999994,
+        "overview": 753.5867770000004
+      }
+    }
+  },
+  "performance_after": {
+    "context": "Local Chromium, Streamlit and dedicated PostgreSQL; five new browser contexts, no WAN/Neon production measurement",
+    "samples": [
+      {
+        "dashboard_ms": 1746.7228039999998,
+        "dashboard_messages": 4,
+        "js_bytes": 88051,
+        "scripts": 3,
+        "navigation": {
+          "observations": 233.45510000000013,
+          "plans": 219.67733700000008,
+          "assessments": 204.2276399999996,
+          "calendar": 196.21681400000034,
+          "history": 201.22328700000025,
+          "overview": 200.62006599999995
+        }
+      },
+      {
+        "dashboard_ms": 1666.858378,
+        "dashboard_messages": 4,
+        "js_bytes": 88051,
+        "scripts": 3,
+        "navigation": {
+          "observations": 218.1731209999998,
+          "plans": 205.0856300000005,
+          "assessments": 220.0343899999998,
+          "calendar": 228.39961200000016,
+          "history": 238.4408910000002,
+          "overview": 211.96334699999989
+        }
+      },
+      {
+        "dashboard_ms": 1249.220744000001,
+        "dashboard_messages": 4,
+        "js_bytes": 88051,
+        "scripts": 3,
+        "navigation": {
+          "observations": 188.53338799999983,
+          "plans": 206.4488109999984,
+          "assessments": 211.13010799999938,
+          "calendar": 209.93616900000052,
+          "history": 186.86049699999967,
+          "overview": 193.72366200000033
+        }
+      },
+      {
+        "dashboard_ms": 1190.4450159999997,
+        "dashboard_messages": 4,
+        "js_bytes": 88051,
+        "scripts": 3,
+        "navigation": {
+          "observations": 186.23149899999953,
+          "plans": 198.64542000000074,
+          "assessments": 178.11371000000145,
+          "calendar": 197.00121000000036,
+          "history": 183.080836000001,
+          "overview": 216.68881499999952
+        }
+      },
+      {
+        "dashboard_ms": 1168.077034,
+        "dashboard_messages": 4,
+        "js_bytes": 88051,
+        "scripts": 3,
+        "navigation": {
+          "observations": 191.25561899999957,
+          "plans": 199.9717870000004,
+          "assessments": 182.58885499999997,
+          "calendar": 174.20113899999888,
+          "history": 177.9795869999998,
+          "overview": 179.0478889999995
+        }
+      }
+    ],
+    "median": {
+      "dashboard_ms": 1249.220744000001,
+      "dashboard_messages": 4,
+      "initial_js_bytes": 88051,
+      "navigation_ms": {
+        "observations": 191.25561899999957,
+        "plans": 205.0856300000005,
+        "assessments": 204.2276399999996,
+        "calendar": 197.00121000000036,
+        "history": 186.86049699999967,
+        "overview": 200.62006599999995
+      }
+    }
+  },
+  "checks": {
+    "build": true,
+    "backend_flows": 39,
+    "model_golden_cases": 357,
+    "model_scenarios": 2142,
+    "configuration_unit_tests": 7,
+    "gemini_mock_tests": 5,
+    "batch_tests": 3,
+    "bridge_transport": true,
+    "native_roles": [
+      "manager",
+      "reader",
+      "company",
+      "outsider"
+    ],
+    "account_session_revocation": true,
+    "restart_persistence_six_tables": true,
+    "ocr_italian_local_worker": true,
+    "pdf_import": true,
+    "exports": [
+      "pdf",
+      "docx",
+      "xlsx",
+      "pptx",
+      "management-pdf",
+      "json",
+      "ics",
+      "png"
+    ],
+    "module_views": 17,
+    "axe_viewports": [
+      375,
+      1440
+    ],
+    "assessment_viewports": [
+      320,
+      768,
+      1024,
+      1440
+    ]
+  },
+  "limits": [
+    "Production Neon connectivity and WAN/cold-start timing not tested: runtime credentials unavailable.",
+    "Gemini disabled; provider calls mocked; no corporate data sent.",
+    "Approved graphic references pending; existing illustrations retained.",
+    "Automated accessibility checks do not certify WCAG or replace screen reader testing."
+  ]
+}
