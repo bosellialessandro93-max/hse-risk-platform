@@ -32,6 +32,42 @@ La connessione è cifrata. È supportato anche `sslmode=verify-full`, con le CA 
 
 Il collaudo PostgreSQL è documentato in [docs/STREAMLIT_POSTGRES_QA.json](docs/STREAMLIT_POSTGRES_QA.json). Usa database/credenziali sintetici locali: non prova l’accesso al progetto Neon dell’utente né il deploy sul suo account Community Cloud.
 
+### Collegamento tramite Neon CLI (`neon.ts`)
+
+Il progetto dedicato indicato dall’utente è `wild-cherry-76203069`, organizzazione `org-crimson-rice-09249677`, branch Neon `production` (distinto dal branch GitHub `streamlit-port`). `neon.ts` conserva il solo servizio PostgreSQL e l’autenticazione nativa HSE; gli SDK Node `@neon/config`/`@neon/env` sono dipendenze di **sviluppo/provisioning**, non del runtime Streamlit. Psycopg e PHP pgsql restano i driver applicativi.
+
+Su una macchina che può raggiungere Neon:
+
+```sh
+npx neon@latest login
+npx neon@latest init -y --org-id org-crimson-rice-09249677 --project-id wild-cherry-76203069 --branch production --services postgres --no-agent-setup
+npx neon@latest deploy
+# Se necessario, aggiornare soltanto le variabili:
+npx neon@latest env pull
+npm run build
+streamlit run app.py
+```
+
+`init --no-agent-setup` configura il progetto senza modificare la configurazione personale dell’AI client. La CLI può scrivere `.neon` anche **offline**: ciò non dimostra autenticazione, provisioning o accesso al database. `deploy` deve riuscire prima di considerare il servizio verificato. Le istruzioni operative dei Neon agent skills sono state consultate; nessuna funzione/auth/storage aggiuntivi sono necessari a questa app.
+
+L’app legge `DATABASE_URL` per le operazioni normali e, se fornita insieme, `DATABASE_URL_UNPOOLED` per la creazione/aggiornamento delle tabelle (Python e PHP). Le variabili di processo prevalgono sui file; in locale `.env.local` prevale su `.env`, senza cercare file in altri repository. Sono mantenuti `[database]` dei Secrets e `HSE_DATABASE` per configurazioni esplicite/QA. `[database]` esplicito prevale sulle URL d’ambiente. Il prefisso opzionale è `HSE_DATABASE_PREFIX`, predefinito `st_`. Un esempio privo di credenziali è in [.env.example](.env.example). Non caricare `.env`, `.env.local` o `.neon` su GitHub.
+
+Su **Community Cloud** la CLI eseguita sul proprio PC non aggiorna automaticamente i Secrets: copiare lì i valori reali ottenuti da Neon. Si può continuare con il precedente `[database] url`, oppure usare questo formato (chiavi URL **prima** delle sezioni TOML):
+
+```toml
+DATABASE_URL = "INCOLLARE_URL_POOLER_DA_NEON"
+DATABASE_URL_UNPOOLED = "INCOLLARE_URL_DIRETTA_DA_NEON"
+
+[hse_auth]
+mode = "password"
+bootstrap_username = "administrator"
+bootstrap_password = "REPLACE_WITH_RANDOM_PASSWORD_AT_LEAST_12_CHARACTERS"
+```
+
+Le due URL devono appartenere allo **stesso database**, branch e ruolo. Non combinare una URL applicativa con un archivio diverso per lo schema. Se si usa solo `[database] url`, il bootstrap resta transazionale e funziona anche con il pooler già collaudato. La password bootstrap deve essere sostituita. La CLI Neon non pubblica il frontend Streamlit.
+
+**Esito di questa configurazione:** CLI `8.10.1` installata; `init` completato con collegamento scritto offline. `login`, `deploy` ed `env pull` bloccati dall’accesso alle API (`CONNECT tunnel failed, response 403` dal proxy dell’ambiente). Nessuna credenziale Neon recuperata e nessuna modifica remota confermata. Build e verifiche PostgreSQL locali sono distinti da una verifica end-to-end sul progetto Neon reale. Dettagli in [docs/NEON_SETUP_STATUS.json](docs/NEON_SETUP_STATUS.json).
+
 ## Autenticazione e profili
 
 **Password:** `[hse_auth] mode = "password"`, `bootstrap_username`, `bootstrap_password` casuale di almeno 12 caratteri. Il bootstrap crea il primo amministratore solo se la tabella account è vuota; non sovrascrive account esistenti. Dopo il primo accesso si può rimuovere la password bootstrap dai Secrets. Non sostituisce una procedura di recupero: mantenere almeno due amministratori se serve un reset da interfaccia. Nessuna password predefinita è incorporata. Hash PBKDF2-SHA256 con salt casuale e 600.000 iterazioni; cinque tentativi falliti bloccano l’account per 15 minuti. La sidebar consente il cambio della propria password; gli amministratori creano/disabilitano account e reimpostano password. Reset e disabilitazione revocano le altre sessioni alla successiva richiesta. Il login password dura nella sessione Streamlit: dopo refresh/restart occorre accedere nuovamente; i dati restano nel DB.

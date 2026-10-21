@@ -1,6 +1,6 @@
 # HSE Risk Platform
 
-Branch **streamlit-port**: avvio **`app.py`**, persistenza esterna **Neon/PostgreSQL o MySQL/MariaDB**, guida [Streamlit / Community Cloud](STREAMLIT.md). Il plugin WordPress descritto sotto è conservato invariato.
+Branch **streamlit-port**: avvio **`app.py`**, persistenza esterna **Neon/PostgreSQL o MySQL/MariaDB**, guida [Streamlit / Community Cloud](STREAMLIT.md). Il plugin WordPress descritto sotto è conservato invariato. In questo branch `npm run build` compila il componente Streamlit; `npm run build:wordpress` conserva il build originale.
 
 Plugin WordPress autonomo, specifica 1.2 del 19/10/2026. Versione **0.3.0**, con motore PHP **2.0.0** portato dal codice completo allegato, senza ricostruire coefficienti dai massimali. Calcolo, salvataggio esplicito, storico, confronti e scenari sono collegati ai moduli operativi esistenti. Le verifiche esterne e i limiti residui sono distinti nella matrice; la Definition of Done complessiva richiede anche i collaudi reali indicati sotto.
 

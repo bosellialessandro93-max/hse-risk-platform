@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "npm run test:model && npm run test:integration && npm run test:browser && npm run test:ocr && npm run test:workflows && npm run test:risk-browser && npm run test:meeting && npm run test:navigation && npm run test:redesign",
-    "build": "node tools/build.mjs",
+    "build": "node tools/build-streamlit.mjs",
     "test:browser": "node tests/browser.mjs",
     "test:ocr": "node tests/ocr.mjs",
     "test:integration": "bash tools/test-integration.sh",
@@ -18,7 +18,8 @@
     "test:risk-browser": "node tests/risk-browser.mjs",
     "test:meeting": "node tests/meeting-evidence.mjs",
     "test:navigation": "node tests/navigation.mjs",
-    "test:redesign": "bash tools/test-redesign.sh"
+    "test:redesign": "bash tools/test-redesign.sh",
+    "build:wordpress": "node tools/build.mjs"
   },
   "repository": {
     "type": "git",
@@ -45,7 +46,9 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "4.10.2",
-    "@playwright/test": "1.56.1"
+    "@playwright/test": "1.56.1",
+    "@neon/config": "1.9.3",
+    "@neon/env": "1.6.4"
   },
   "overrides": {
     "image-size": "2.0.3",

@@ -27,6 +27,6 @@ f.write_text(json.dumps(env));f.chmod(0o600)
 php = json.loads(env.get('HSE_PHP_COMMAND','["php"]'))
 version = subprocess.check_output(php+['-r','echo "PHP ".PHP_VERSION;'], text=True).strip()
 child_env = dict(os.environ, HSE_QA_DIR=str(qa), HSE_QA_RUNTIME=version)
-for test in ('backend.py','auth.py','postgres.py','session_isolation.py'):
+for test in ('configuration.py','backend.py','auth.py','postgres.py','session_isolation.py'):
     subprocess.run([sys.executable,str(ROOT/'tests/streamlit'/test)],env=child_env,cwd=ROOT,check=True)
 print('PASS PostgreSQL suite; native browser QA config saved in ignored .local/streamlit-postgres-qa')

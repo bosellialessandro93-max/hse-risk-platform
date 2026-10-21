@@ -1,0 +1,88 @@
+{
+  "date": "2026-10-21",
+  "git_branch": "streamlit-port",
+  "neon_project": "wild-cherry-76203069",
+  "neon_branch": "production",
+  "neon_org": "org-crimson-rice-09249677",
+  "cli": {
+    "package": "neon",
+    "version": "8.10.1",
+    "installed": true,
+    "init_exit_code": 0,
+    "link_written_offline": true,
+    "remote_project_verified": false,
+    "deploy_exit_code": 1,
+    "login_exit_code": 1,
+    "env_pull_exit_code": 1
+  },
+  "remaining_block": {
+    "cli_error": "Could not reach the Neon API. Please check your internet connection and try again.",
+    "network_diagnostic": "curl: (56) CONNECT tunnel failed, response 403",
+    "targets": [
+      "https://console.neon.tech/api/v2/projects",
+      "https://console.neon.com/api/v2/projects"
+    ],
+    "credentials_retrieved": false,
+    "remote_changes_confirmed": false
+  },
+  "application_changes": [
+    "Neon neon.ts policy and local provisioning SDKs",
+    "DATABASE_URL / DATABASE_URL_UNPOOLED support",
+    "dotenv local loading with OS/Secrets precedence",
+    "Direct connection for Python/PHP schema initialization when paired URL supplied",
+    "Ignore local Neon configuration, dotenv credentials and installed agent skills",
+    "Streamlit default npm build, original WordPress build preserved as build:wordpress"
+  ],
+  "effective_checks": {
+    "npm_run_build": {
+      "exit_code": 0,
+      "output": "Built Streamlit component; WordPress assets unchanged."
+    },
+    "neon_ts_official_sdk_loader": {
+      "exit_code": 0,
+      "output": "PASS neon.ts validated with official Neon config loader"
+    },
+    "configuration_tests": {
+      "total": 7,
+      "output": "Ran 7 tests; OK"
+    },
+    "backend_with_direct_schema_and_pooled_queries": {
+      "output": "PASS 39 Streamlit backend flows; 357 golden cases, 2142 scenarios, all profiles, imports, export snapshots and DB persistence",
+      "database": "local synthetic PostgreSQL 17.11 and PgBouncer 1.24.1, TLS",
+      "real_neon": false
+    },
+    "browser_using_standard_database_url_variables": {
+      "output": "PASS Streamlit browser: native login, risk calculate/save/history, all exports, photos/annotations, meeting, map, Italian OCR/WASM, PDF import, responsive/axe and relogin persistence",
+      "database": "local synthetic PostgreSQL 17.11; local-only TLS disabled for this standard-env check",
+      "covered": [
+        "native login",
+        "risk calculate/save/history",
+        "all export formats",
+        "photos/annotations",
+        "meetings",
+        "maps",
+        "Italian OCR/WASM",
+        "PDF import",
+        "responsive/axe",
+        "reload/login persistence"
+      ]
+    },
+    "streamlit_health": {
+      "http_status": 200,
+      "body": "ok"
+    },
+    "session_isolation": {
+      "passed": true
+    },
+    "pip_check": {
+      "output": "No broken requirements found."
+    },
+    "python_compile": true,
+    "wordpress_and_risk_sources_unchanged": true
+  },
+  "not_executed": [
+    "Neon project authentication/connection/provisioning because API is unreachable",
+    "Real Neon end-to-end flows",
+    "User Community Cloud deployment or saving its Secrets"
+  ]
+}

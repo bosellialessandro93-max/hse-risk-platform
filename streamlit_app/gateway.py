@@ -6,7 +6,7 @@ import re
 import shutil
 import subprocess
 
-from streamlit_app.database import validated_config
+from streamlit_app.database import validated_config, schema_config
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -16,7 +16,7 @@ class RuntimeUnavailable(RuntimeError):
 
 
 def invoke(config, actor, *, request=None, action=None, model=None):
-    config = validated_config(config)
+    config = schema_config(config) if action == 'bootstrap' else validated_config(config)
     command = json.loads(os.environ['HSE_PHP_COMMAND']) if os.environ.get('HSE_PHP_COMMAND') else [shutil.which('php') or 'php']
     path = os.environ.get('HSE_RUNNER_PATH', str(ROOT / 'streamlit_app/runtime/runner.php'))
     payload = {'actor': {'id': int(actor['id']), 'is_admin': bool(actor['is_admin'])}}

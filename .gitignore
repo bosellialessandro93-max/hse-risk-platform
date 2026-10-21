@@ -5,3 +5,11 @@ __pycache__/
 .streamlit/secrets.toml
 
 .venv/
+
+# Neon CLI environment and local credentials
+.env
+.env.*
+!.env.example
+.neon
+.agents/skills/
+skills-lock.json

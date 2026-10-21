@@ -8,6 +8,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 from streamlit_app import database
+from streamlit_app.configuration import database_configuration
 from streamlit_app.gateway import invoke
 
 st.set_page_config(page_title='HSE Risk Platform', page_icon='🛡️', layout='wide')
@@ -20,7 +21,7 @@ def configuration():
         values = st.secrets.to_dict()
     except FileNotFoundError:
         values = {}
-    config = json.loads(os.environ['HSE_DATABASE']) if os.environ.get('HSE_DATABASE') else values.get('database', {})
+    config = database_configuration(values)
     auth = json.loads(os.environ['HSE_AUTH']) if os.environ.get('HSE_AUTH') else values.get('hse_auth', {})
     if auth.get('mode', 'password') not in ('password', 'oidc'):
         raise ValueError('Modalità di autenticazione non valida.')

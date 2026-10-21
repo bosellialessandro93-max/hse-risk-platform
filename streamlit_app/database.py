@@ -47,6 +47,13 @@ def validated_config(config):
     return result
 
 
+def schema_config(config):
+    config = validated_config(config)
+    if config.get('schema_url'):
+        return validated_config({**config, 'url': config['schema_url']})
+    return config
+
+
 @contextmanager
 def connection(config):
     config = validated_config(config)
@@ -111,7 +118,7 @@ def password_matches(password, encoded):
 
 
 def initialize(config, auth):
-    config = validated_config(config)
+    config = schema_config(config)
     if config['driver'] == 'postgresql':
         return initialize_postgres(config, auth)
     prefix = config['prefix']
