@@ -84,5 +84,21 @@
     "Neon project authentication/connection/provisioning because API is unreachable",
     "Real Neon end-to-end flows",
     "User Community Cloud deployment or saving its Secrets"
-  ]
+  ],
+  "direct_connection_followup": {
+    "date": "2026-10-21",
+    "credentials_supplied_by_user": true,
+    "url_stored_only_in_ignored_private_files": true,
+    "connection_verified": false,
+    "dns_resolved": false,
+    "error": "gaierror: [Errno -3] Temporary failure in name resolution",
+    "retry_outside_sandbox": "same DNS error",
+    "authentication_attempt_reached_server": false,
+    "remote_tables_created": false,
+    "native_admin_created_remotely": false,
+    "streamlit_secrets_prepared_locally": true,
+    "secrets_toml_validated": true,
+    "secrets_file_mode": "0600",
+    "production_site_modified": false
+  }
 }
