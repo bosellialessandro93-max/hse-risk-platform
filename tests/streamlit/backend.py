@@ -72,8 +72,8 @@ check(api('assets/'+asset['id'])['base64']==photo,'private binary durable storag
 api('assets/'+asset['id'],actor=users['company'],status=403)
 observation=patch('observations',observation,{'attachments':[asset['id']]})
 check(asset['id'] in observation['attachments'],'photo link')
-event=create('events',{'site_id':sid,'month':'2026-09','channel':'formal','topic':'elettrico','severity':'High','state':'Open','reason':'DEMO motivazione','reference':'HSEQ4ALL-DEMO'})
-assessment={'site_id':sid,'month':'2026-09','phase':'costruzione','activities':['elettrici'],'contractors':1,'subcontractors':0,'coverage':80,'interference':3,'inspections':0,'event_ids':[event['id']]}
+event=create('events',{'site_id':sid,'event_date':'2026-09-09','channel':'formal','topic':'elettrico','severity':'High','state':'Open','reason':'DEMO motivazione','reference':'HSEQ4ALL-DEMO'})
+assessment={'site_id':sid,'week':'2026-09-07','phase':'costruzione','activities':['elettrici'],'contractors':1,'subcontractors':0,'coverage':80,'interference':3,'inspections':0,'event_ids':[event['id']]}
 computed=api('risk/calculate',assessment,'POST');check(computed['result']['floor']==61 and computed['result']['base']>=61,'formal high floor and detection')
 api('risk/calculate',assessment,'POST',actor=users['company'],status=403)
 api('risk/calculate',assessment,'POST',actor=users['reader'],status=403)

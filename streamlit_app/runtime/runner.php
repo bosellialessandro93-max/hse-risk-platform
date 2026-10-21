@@ -3,7 +3,7 @@
 if(PHP_SAPI!=='cli')exit(1);
 error_reporting(E_ALL);ini_set('display_errors','0');date_default_timezone_set('UTC');
 require __DIR__.'/compatibility.php';require __DIR__.'/postgres.php';define('ABSPATH',__DIR__.'/');define('HSE_VERSION','0.3.0-streamlit');
-$source=dirname(__DIR__,2).'/hse-risk-platform/includes/';foreach(['store','domain','risk','maps','api'] as $name)require $source.$name.'.php';
+$source=dirname(__DIR__,2).'/hse-risk-platform/includes/';require $source.'store.php';require __DIR__.'/periods.php';require __DIR__.'/landscape.php';foreach(['domain','risk','maps','api'] as $name)require __DIR__.'/generated/'.$name.'.php';
 $tmp=[];
 try{
  $input=json_decode(stream_get_contents(STDIN),true,512,JSON_THROW_ON_ERROR);$GLOBALS['hse_actor']=$input['actor']??['id'=>0,'is_admin'=>false];
