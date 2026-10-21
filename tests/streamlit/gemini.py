@@ -116,6 +116,38 @@ class GeminiTests(unittest.TestCase):
             with self.assertRaisesRegex(AssistanceUnavailable,message):
                 assist(self.secrets, **self.args)
 
+    @patch('streamlit_app.gemini.request.urlopen')
+    def test_catalog_paginates_filters_and_never_selects_or_sends_content(self, send):
+        self.secrets['gemini']['model'] = 'invalid/old-model'
+        pages = [
+            {'models':[{'name':'models/gemini-available-test','supportedGenerationMethods':['generateContent']},
+                       {'name':'models/gemini-embedding-test','supportedGenerationMethods':['embedContent']},
+                       {'name':'https://unsafe.invalid','supportedGenerationMethods':['generateContent']}], 'nextPageToken':'a/b&c'},
+            {'models':[{'name':'models/gemini-available-test','supportedGenerationMethods':['generateContent']}]}]
+        def response(req, **kwargs):
+            self.assertEqual(req.get_method(), 'GET')
+            self.assertIsNone(req.data)
+            self.assertNotIn('synthetic-test-key', req.full_url)
+            if send.call_count == 2:
+                self.assertIn('pageToken=a%2Fb%26c', req.full_url)
+            return io.BytesIO(json.dumps(pages.pop(0)).encode())
+        send.side_effect = response
+        self.assertEqual(dispatch(self.secrets, {'operation':'list_models'}), {'models':['gemini-available-test']})
+        self.assertEqual(self.secrets['gemini']['model'], 'invalid/old-model')
+        self.assertEqual(send.call_count, 2)
+
+    @patch('streamlit_app.gemini.request.urlopen')
+    def test_explicit_model_override_is_validated_without_mutating_secrets(self, send):
+        send.return_value.__enter__.return_value = io.BytesIO(json.dumps({'candidates':[{'content':{'parts':[{'text':'OK'}]}}]}).encode())
+        self.assertEqual(dispatch(self.secrets, {'operation':'generate','model':'gemini-available-test',**self.args}), {'text':'OK'})
+        self.assertTrue(send.call_args.args[0].full_url.endswith('/gemini-available-test:generateContent'))
+        self.assertNotIn('model', self.secrets['gemini'])
+        send.reset_mock()
+        for invalid in ('../external', '', 'https://other.invalid', [], 42):
+            with self.assertRaises(AssistanceUnavailable):
+                assist(self.secrets, **self.args, model=invalid)
+        send.assert_not_called()
+
 
 if __name__ == '__main__':
     unittest.main()

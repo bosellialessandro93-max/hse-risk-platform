@@ -28,7 +28,7 @@ workspace = components.declare_component('hse_workspace', path=str(ROOT / 'strea
 
 def dispatch_assistant(secrets, data):
     # Refresh only the optional service on use, including after an in-place cloud update.
-    if getattr(assistant_service, 'SERVICE_VERSION', None) != 3:
+    if getattr(assistant_service, 'SERVICE_VERSION', None) != 4:
         importlib.reload(assistant_service)
     return assistant_service.dispatch(secrets, data)
 

@@ -1,7 +1,7 @@
 """Lazy boundary: an optional AI module must never prevent platform startup."""
 import importlib
 
-SERVICE_VERSION = 3
+SERVICE_VERSION = 4
 
 def dispatch(secrets, data):
     try:

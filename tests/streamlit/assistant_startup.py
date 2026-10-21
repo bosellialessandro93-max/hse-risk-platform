@@ -25,8 +25,8 @@ old.__file__=str(path)
 old.__spec__=importlib.util.spec_from_file_location(old.__name__,path)
 sys.modules[old.__name__]=old
 from streamlit_app.assistant_service import dispatch
-assert dispatch({}, {'operation':'status'}) == {'enabled':False,'key_present':False,'ready':False,'confidential_authorized':False}
-assert sys.modules[old.__name__].ASSISTANT_API_VERSION == 3
+assert dispatch({}, {'operation':'status'}) == {'enabled':False,'key_present':False,'ready':False,'model':'gemini-2.5-flash','confidential_authorized':False}
+assert sys.modules[old.__name__].ASSISTANT_API_VERSION == 4
 """], cwd=ROOT, check=True)
 
     @patch('streamlit_app.assistant_service.importlib.import_module', side_effect=ImportError('private diagnostic'))
