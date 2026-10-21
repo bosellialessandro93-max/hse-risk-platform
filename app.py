@@ -1,5 +1,6 @@
 """Run: streamlit run app.py. Durable data lives exclusively in external MySQL/PostgreSQL."""
 import json
+import importlib
 import os
 import re
 from pathlib import Path
@@ -11,7 +12,7 @@ from streamlit_app import database
 from streamlit_app.configuration import database_configuration
 from streamlit_app.gateway import invoke
 from streamlit_app.branding import show_brand
-from streamlit_app.assistant_service import dispatch as dispatch_assistant
+from streamlit_app import assistant_service
 
 st.set_page_config(page_title='HSE Risk Index', page_icon='🛡️', layout='wide', initial_sidebar_state='collapsed')
 st.html('''<style>
@@ -23,6 +24,13 @@ st.html('''<style>
 </style>''')
 ROOT = Path(__file__).resolve().parent
 workspace = components.declare_component('hse_workspace', path=str(ROOT / 'streamlit_app/frontend'))
+
+
+def dispatch_assistant(secrets, data):
+    # Refresh only the optional service on use, including after an in-place cloud update.
+    if getattr(assistant_service, 'SERVICE_VERSION', None) != 3:
+        importlib.reload(assistant_service)
+    return assistant_service.dispatch(secrets, data)
 
 
 def configuration():
