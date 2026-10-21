@@ -61,8 +61,9 @@ async function assistantPage(){
  const main=body();main.classList.add('corporate-assistant');
  main.append(el('p',{class:'page-intro'},'Analisi assistita di NC, estratti documentali, risultati e raccomandazioni. Nessuna modifica automatica a dati o Risk Index.'));
  const status=await api('__assistant',{method:'POST',data:{operation:'status'}});
- const badges=el('div',{class:'ai-status'},el('span',{class:'badge'},status.ready?'Gemini configurato':'Configurazione necessaria'),el('span',{class:'badge'},status.key_present?'Chiave presente nei Secrets':'Chiave non configurata'),el('span',{class:'badge'},status.confidential_authorized?'Trattamento riservati autorizzato':'Dati riservati bloccati'));
+ const badges=el('div',{class:'ai-status'},el('span',{class:'badge'},status.ready?'Configurazione presente':'Configurazione necessaria'),el('span',{class:'badge'},status.key_present?'Chiave presente nei Secrets':'Chiave non configurata'),el('span',{class:'badge'},status.confidential_authorized?'Trattamento riservati autorizzato':'Dati riservati bloccati'));
  main.append(badges);
+ if(status.ready)main.append(el('p',{class:'field-help'},'La presenza della chiave non conferma ancora l’accesso a Google o la disponibilità della quota.'),iconButton('Verifica collegamento','check-square',async()=>{const checked=await api('__assistant',{method:'POST',data:{operation:'check_connection'}});message(checked.message);}));
  if(!status.ready){const notice=el('section',{class:'card'},el('h3',{},status.key_present?'Abilita Google Gemini':'Collega Google Gemini'),el('p',{},HSE_CONFIG.admin?'Aggiungi la chiave e abilita Gemini nei Secrets dell’app Streamlit. Non modificare la configurazione Neon esistente.':'L’amministratore deve completare la configurazione nei Secrets Streamlit. Nessun dato viene trasmesso.'));
   if(HSE_CONFIG.admin)notice.append(el('details',{},el('summary',{},'Istruzioni per i Secrets Streamlit'),el('p',{},'Apri Manage app → Settings → Secrets. Se la sezione [gemini] esiste già, aggiornala senza duplicarla; altrimenti aggiungila in fondo al file. Mantieni invariate le sezioni database e autenticazione. Inserisci la chiave solo in quell’editor e salva.'),el('pre',{},'[gemini]\nenabled = true\n'+(status.key_present?'':'api_key = "INSERISCI_LA_CHIAVE_NELL_EDITOR_SECRETS"\n')+'model = "gemini-2.5-flash"\nprocessing_authorized = false\nallow_confidential_data = false'),el('p',{},'Sono supportate anche Gemini API Key, GEMINI_API_KEY o GOOGLE_API_KEY già presenti nei Secrets. L’abilitazione richiede comunque [gemini] enabled = true.')));
   main.append(notice);
@@ -77,7 +78,7 @@ async function assistantPage(){
  let busy=false;
  form.addEventListener('submit',event=>{event.preventDefault();if(busy||!status.ready)return;run(async()=>{
   if(!text.value.trim()||!consent.checked)throw new Error('Inserisci il testo e conferma esplicitamente l’invio.');
-  busy=true;send.disabled=true;send.setAttribute('aria-busy','true');
+  result.hidden=true;busy=true;send.disabled=true;send.setAttribute('aria-busy','true');
   try{const response=await api('__assistant',{method:'POST',data:{operation:'generate',task:task.value,text:text.value,classification:classification.value,consent:consent.checked}});consent.checked=false;result.hidden=false;result.replaceChildren(el('h3',{},'Suggerimento da verificare'),el('p',{},'Risposta generata da Gemini. Nessun dato è stato salvato o modificato.'),el('pre',{},response.text));}
   finally{busy=false;send.disabled=false;send.removeAttribute('aria-busy');}
  });});main.append(form,result);
