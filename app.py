@@ -12,8 +12,16 @@ from streamlit_app.configuration import database_configuration
 from streamlit_app.gateway import invoke
 from streamlit_app.assistant_ui import render as render_assistant
 from streamlit_app.branding import show_brand
+from streamlit_app.gemini import dispatch as dispatch_assistant
 
-st.set_page_config(page_title='HSE Risk Platform', page_icon='🛡️', layout='wide')
+st.set_page_config(page_title='HSE Risk Index', page_icon='🛡️', layout='wide', initial_sidebar_state='collapsed')
+st.html('''<style>
+[data-testid="stHeader"]{display:none}
+[data-testid="stMainBlockContainer"]{max-width:none;padding:0}
+[data-testid="stSidebar"]{background:#f7fafc;border-right:1px solid #dbe5ef}
+[data-testid="stSidebar"] [data-testid="stSidebarUserContent"]{padding-top:1.5rem}
+[data-testid="stForm"]{background:white;border:1px solid #dbe5ef;border-radius:14px;padding:1.5rem}
+</style>''')
 ROOT = Path(__file__).resolve().parent
 workspace = components.declare_component('hse_workspace', path=str(ROOT / 'streamlit_app/frontend'))
 
@@ -55,6 +63,7 @@ except Exception:
 
 if auth.get('mode', 'password') == 'oidc':
     if not st.user.is_logged_in:
+        st.html('<style>[data-testid="stMainBlockContainer"]{padding:2rem;max-width:1100px}</style>')
         show_brand('profiles')
         st.title('HSE Risk Platform')
         st.write('Accedi con il tuo account aziendale.')
@@ -76,6 +85,7 @@ else:
         st.session_state.clear()
         actor = None
     if not actor:
+        st.html('<style>[data-testid="stMainBlockContainer"]{padding:2rem;max-width:1100px}</style>')
         show_brand('profiles')
         st.title('HSE Risk Platform')
         with st.form('login', clear_on_submit=True):
@@ -101,6 +111,8 @@ if st.session_state.get('hse_owner') != actor['id']:
             del st.session_state[key]
     st.session_state['hse_owner'] = actor['id']
 
+if st.session_state.get('hse_next_page'):
+    st.session_state['hse_page'] = st.session_state.pop('hse_next_page')
 with st.sidebar:
     st.write('**' + actor['display_name'] + '**')
     st.caption(f"ID account: {actor['id']} · {'Amministratore' if actor['is_admin'] else 'Permessi per cantiere'}")
@@ -120,7 +132,36 @@ with st.sidebar:
                         st.success('Password aggiornata; le altre sessioni dovranno accedere nuovamente.')
                     except ValueError as error:
                         st.error(str(error))
-    page = st.radio('Spazio di lavoro', ['Piattaforma', 'Account utenti', 'Assistenza AI'] if actor['is_admin'] else ['Piattaforma', 'Assistenza AI'], label_visibility='collapsed')
+    page = st.radio('Spazio di lavoro', ['Piattaforma', 'Account utenti', 'Assistenza AI', 'Profilo'] if actor['is_admin'] else ['Piattaforma', 'Assistenza AI', 'Profilo'], key='hse_page', label_visibility='collapsed')
+
+if page != 'Piattaforma':
+    st.html('<style>[data-testid="stMainBlockContainer"]{padding:2rem;max-width:1200px}</style>')
+    st.button('Torna alla piattaforma', on_click=lambda: st.session_state.update(hse_next_page='Piattaforma'))
+    if page != 'Profilo':
+        st.button('Il tuo profilo', on_click=lambda: st.session_state.update(hse_next_page='Profilo'))
+    if st.button('Esci dall’account'):
+        st.session_state.clear()
+        if auth.get('mode') == 'oidc':
+            st.logout()
+        st.rerun()
+
+if page == 'Profilo':
+    st.title('Il tuo profilo')
+    st.write(actor['display_name'])
+    st.caption('Amministratore' if actor['is_admin'] else 'Permessi assegnati per cantiere e impresa')
+    if actor['is_admin']:
+        st.button('Gestisci gli account', on_click=lambda: st.session_state.update(hse_next_page='Account utenti'))
+    if auth.get('mode', 'password') == 'password':
+        with st.form('profile_password', clear_on_submit=True):
+            previous = st.text_input('Password attuale', type='password', max_chars=512)
+            replacement = st.text_input('Nuova password personale', type='password', max_chars=512)
+            if st.form_submit_button('Aggiorna la tua password'):
+                try:
+                    st.session_state['login_version'] = database.change_password(config, actor, previous, replacement)
+                    st.success('Password aggiornata; le altre sessioni dovranno accedere nuovamente.')
+                except ValueError as error:
+                    st.error(str(error))
+    st.stop()
 
 if page == 'Assistenza AI':
     render_assistant()
@@ -166,7 +207,7 @@ try:
             stop_error(response['error']['message'])
         st.session_state['hse_bootstrapped'] = True
     responses = st.session_state.setdefault('hse_responses', [])
-    request = workspace(config={'admin': bool(actor['is_admin']), 'user': actor['id'], 'selected_site': st.query_params.get('hse_site', '')}, responses=responses, key='workspace_' + str(actor['id']), default=None)
+    request = workspace(config={'admin': bool(actor['is_admin']), 'user': actor['id'], 'display_name': actor['display_name'], 'selected_site': st.query_params.get('hse_site', '')}, responses=responses, key='workspace_' + str(actor['id']), default=None)
     if isinstance(request, dict) and request.get('id') not in st.session_state.get('hse_processed', []):
         try:
             selected = request.get('active_site', '') or ''
@@ -175,7 +216,24 @@ try:
             # Actor always comes from the authenticated server session, never component data.
             # Already revalidated (including token_version) at the beginning of this run.
             # Do not open a second Neon connection for the same request.
-            result = invoke(config, actor, request=request)
+            if request.get('path') == '__assistant':
+                if request.get('method') != 'POST':
+                    raise ValueError('Metodo assistente non valido.')
+                try:
+                    secret_values = st.secrets.to_dict()
+                except FileNotFoundError:
+                    secret_values = {}
+                result = {'data': dispatch_assistant(secret_values, request.get('data'))}
+            elif request.get('path') == '__ui':
+                target = (request.get('data') or {}).get('page')
+                if request.get('method') != 'POST' or target not in ('Profilo', 'Account utenti'):
+                    raise ValueError('Navigazione non valida.')
+                if target == 'Account utenti' and not actor['is_admin']:
+                    raise ValueError('Accesso alla gestione account non consentito.')
+                st.session_state['hse_next_page'] = target
+                result = {'data': {'page': target}}
+            else:
+                result = invoke(config, actor, request=request)
         except (ValueError, RuntimeError) as error:
             result = {'error': {'message': str(error), 'status': 503}}
         responses.append({'id': request['id'], **result})

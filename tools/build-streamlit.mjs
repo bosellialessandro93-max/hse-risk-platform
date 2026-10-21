@@ -1,6 +1,7 @@
 import {build} from 'esbuild';
 import fs from 'node:fs';
 import path from 'node:path';
+import {createHash} from 'node:crypto';
 const source='hse-risk-platform/assets',destination='streamlit_app/frontend/assets';
 fs.mkdirSync(destination,{recursive:true});
 function copy(src,dst){
@@ -16,6 +17,12 @@ function copy(src,dst){
 for(const name of ['vendor','fonts','images','app.css','standalone.css'])if(fs.existsSync(source+'/'+name))copy(source+'/'+name,destination+'/'+name);
 for(const name of ['LICENSE','THIRD_PARTY_LICENSES.txt'])copy('hse-risk-platform/'+name,'streamlit_app/frontend/'+name);
 copy('streamlit_app/ui/design.css',destination+'/design.css');
+const iconNames=['house','buildings','lightbulb','clipboard-text','warning-circle','list-checks','users-three','calendar-blank','camera','chats-circle','toolbox','users','check-square','files','map-trifold','chart-bar','archive','sparkle','squares-four','user-circle','caret-down','play','tree-structure','wind','sun','battery-charging','file-text','arrow-right','shield-check','leaf','gear-six'];
+fs.mkdirSync(destination+'/icons',{recursive:true});
+for(const name of iconNames)copy('node_modules/@phosphor-icons/core/assets/regular/'+name+'.svg',destination+'/icons/'+name+'.svg');
+copy('node_modules/@phosphor-icons/core/LICENSE',destination+'/icons/LICENSE');
+for(const weight of [400,500,600,700,800])copy(`node_modules/@fontsource/inter/files/inter-latin-${weight}-normal.woff2`,`${destination}/fonts/inter-latin-${weight}-normal.woff2`);
+copy('node_modules/@fontsource/inter/LICENSE',destination+'/fonts/Inter-LICENSE');
 const brand=JSON.parse(fs.readFileSync('streamlit_app/ui/brand.json','utf8'));
 const slots=['logo','home','dashboard_hse','dashboard_company','assessment','output','profiles','wind','solar','bess'];
 for(const [slot,entry] of Object.entries(brand)){
@@ -50,6 +57,18 @@ replaceOnce("catch(e){counts.append(el('p',{},e.message));}}main.append(counts",
 replaceOnce("src:HSE_CONFIG.assets+'images/'+technology.toLowerCase()+'.svg'", "'data-image-slot':technology.toLowerCase(),src:HSE_CONFIG.assets+(brand[technology.toLowerCase()]?'brand/'+brand[technology.toLowerCase()].file:'images/'+technology.toLowerCase()+'.svg')");
 code=code.replaceAll("class:'card technology-card'},technologyImage(technology)", "class:'card technology-card','data-technology':technology},technologyImage(technology)");
 code=code.replaceAll("class:'card technology-card'},technologyImage(site.technology)", "class:'card technology-card','data-technology':site.technology},technologyImage(site.technology)");
+// Replace only Streamlit presentation functions. Existing forms, exports and domain calls remain shared.
+function removeFunction(before,next){const from=code.indexOf(before),to=code.indexOf(next,from);if(from<0||to<0)throw new Error('Corporate UI boundary changed: '+before);code=code.slice(0,from)+code.slice(to);}
+removeFunction('async function init(){','async function render(){');
+removeFunction('async function overview(){','async function resource(kind){');
+if(!/^function navLayout\(\)\{.*\}$/m.test(code))throw new Error('Navigation boundary changed');
+code=code.replace(/^function navLayout\(\)\{.*\}$/m,'');
+replaceOnce("const nav=root.querySelector('nav');", "const nav=root.querySelector('#hse-nav');");
+replaceOnce("nav.append(el('button',{type:'button','aria-current':state.view===v?'page':null,onclick:()=>run(()=>change(v))},labels[v]));", 'nav.append(corporateNavButton(v));');
+replaceOnce("root.dataset.role=companyPath?'company':'hse';", "refreshCorporateHeader(companyPath);root.dataset.screen='view';root.dataset.role=companyPath?'company':'hse';");
+replaceOnce("if(state.view==='sites')return sitesView();", "if(state.view==='ai')return assistantPage();if(state.view==='sites')return sitesView();");
+replaceOnce('async function edit(kind,record){', "async function edit(kind,record){root.dataset.screen='editor';root.dataset.resource=kind;");
+code=fs.readFileSync('streamlit_app/ui/workspace.js','utf8')+'\n'+code;
 const exportsSource=fs.readFileSync(source+'/exports.js','utf8');
 const download=exportsSource.match(/^export function download\(.+$/m)?.[0];
 const ics=exportsSource.match(/^export function ics\(.+$/m)?.[0];
@@ -74,4 +93,6 @@ const result=await build({stdin:{contents:code,resolveDir:path.resolve(source),s
  outdir:destination,entryNames:'app.bundle',bundle:true,minify:true,platform:'browser',target:['es2022'],format:'esm',splitting:true,
  chunkNames:'hse-chunk-[hash]',metafile:true,define:{'process.env.NODE_ENV':'"production"'},legalComments:'eof',plugins});
 fs.mkdirSync('.local',{recursive:true});fs.writeFileSync('.local/streamlit-build.json',JSON.stringify(result.metafile,null,2));
+const release=createHash('sha256').update(code).update(fs.readFileSync('streamlit_app/ui/design.css')).update(fs.readFileSync('streamlit_app/frontend/bridge.js')).update(fs.readFileSync('package-lock.json')).digest('hex').slice(0,12);
+fs.writeFileSync('streamlit_app/frontend/index.html',fs.readFileSync('streamlit_app/ui/index.html','utf8').replaceAll('__HSE_RELEASE__',release));
 console.log('Built lazy Streamlit component; WordPress assets unchanged.');

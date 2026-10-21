@@ -39,9 +39,9 @@ try{
   await page.screenshot({path:`tests/artifacts/design-assessment-${width}.png`,fullPage:true});
  }
  // The optional AI screen must be useful and inert without a key or activation.
- await page.getByText('Assistenza AI',{exact:true}).click();
- await expect(page.getByText(/Gemini è disattivato/)).toBeVisible();
- await expect(page.getByRole('button',{name:'Invia il testo a Gemini'})).toHaveCount(0);
+ await frame.getByRole('button',{name:'Assistenza AI',exact:true}).click();
+ await expect(frame.getByText('Chiave non configurata',{exact:true})).toBeVisible();
+ await expect(frame.getByRole('button',{name:'Invia il testo a Gemini'})).toBeDisabled();
  if(errors.length)throw new Error(errors.join('\n'));
  fs.writeFileSync('tests/artifacts/streamlit-design-qa.json',JSON.stringify({reports,errors,assessment_widths:[320,768,1024,1440],gemini_disabled:true},null,2));
  console.log('PASS 17 module views at 375/1440px: no overflow or axe violations; assessment at 320/768/1024/1440px; Gemini disabled.');

@@ -46,9 +46,11 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "4.10.2",
-    "@playwright/test": "1.56.1",
+    "@fontsource/inter": "5.2.8",
     "@neon/config": "1.9.3",
-    "@neon/env": "1.6.4"
+    "@neon/env": "1.6.4",
+    "@phosphor-icons/core": "2.1.1",
+    "@playwright/test": "1.56.1"
   },
   "overrides": {
     "image-size": "2.0.3",

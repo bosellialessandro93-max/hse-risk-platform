@@ -6,7 +6,7 @@ import sys
 import unittest
 from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-from streamlit_app.gemini import AssistanceUnavailable, assist
+from streamlit_app.gemini import AssistanceUnavailable, assist, dispatch, settings, status
 
 
 class GeminiTests(unittest.TestCase):
@@ -57,6 +57,23 @@ class GeminiTests(unittest.TestCase):
             send.return_value.__enter__.return_value = io.BytesIO(json.dumps(value).encode())
             with self.assertRaises(AssistanceUnavailable):
                 assist(self.secrets, **self.args)
+
+    def test_streamlit_secret_aliases_and_metadata_redaction(self):
+        for name in ('GEMINI_API_KEY', 'GOOGLE_API_KEY', 'Gemini API Key'):
+            secrets = {'gemini': {'enabled': True}, name: 'synthetic-secret-value'}
+            self.assertEqual(settings(secrets)['api_key'], 'synthetic-secret-value')
+            result = dispatch(secrets, {'operation': 'status'})
+            self.assertTrue(result['ready'])
+            self.assertNotIn('synthetic-secret-value', json.dumps(result))
+            self.assertFalse(status({name: 'synthetic-secret-value'})['enabled'])
+
+    @patch('streamlit_app.gemini.request.urlopen')
+    def test_status_does_not_send_and_invalid_operations_fail(self, send):
+        dispatch(self.secrets, {'operation': 'status'})
+        for data in (None, {}, {'operation': 'other'}):
+            with self.assertRaises(AssistanceUnavailable):
+                dispatch(self.secrets, data)
+        send.assert_not_called()
 
 
 if __name__ == '__main__':

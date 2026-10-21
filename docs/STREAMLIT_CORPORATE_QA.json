@@ -1,0 +1,151 @@
+{
+  "reference": "Second user attachment: corporate HSE Risk Index homepage, 1448x1086",
+  "implemented": [
+    "Corporate header with actual identity, compact primary navigation and module drawer",
+    "Photographic Wind/Solar/BESS hero and reconstructed brand mark derived from supplied reference",
+    "Four operational flow cards with real navigation, role-aware company path and accessible controls",
+    "Local Inter typography and Phosphor icons; licenses bundled",
+    "Versioned CSS/bridge/bundle URLs to prevent stale asset reuse",
+    "Gemini inside component with server-only Secrets aliases and configuration status"
+  ],
+  "checks": {
+    "build": true,
+    "browser_calculate_save_relogin_exports_ocr_pdf": true,
+    "module_views_axe_no_overflow": 17,
+    "module_viewports": [
+      375,
+      1440
+    ],
+    "assessment_viewports": [
+      320,
+      768,
+      1024,
+      1440
+    ],
+    "roles": [
+      "manager",
+      "reader",
+      "company",
+      "outsider"
+    ],
+    "native_account_creation_and_revocation": true,
+    "session_isolation": true,
+    "gemini_unit_tests": 7,
+    "batch_unit_integration_tests": 3,
+    "bridge_tests": true,
+    "gemini_end_to_end_mock": {
+      "mocked_provider": true,
+      "secret_alias": "Gemini API Key",
+      "key_not_exposed": true,
+      "explicit_consent": true,
+      "confidential_blocked": true,
+      "server_bridge_success": true,
+      "provider_calls": 1,
+      "errors": []
+    },
+    "corporate_navigation": {
+      "module_drawer": true,
+      "flow_export_navigation": true,
+      "native_profile_password_access": true,
+      "return_to_workspace": true,
+      "logout": true,
+      "errors": []
+    }
+  },
+  "performance": {
+    "context": "Local Chromium, Streamlit and dedicated PostgreSQL; five new browser contexts, no WAN/Neon production measurement",
+    "samples": [
+      {
+        "dashboard_ms": 1714.6105839999998,
+        "dashboard_messages": 4,
+        "js_bytes": 96977,
+        "scripts": 3,
+        "navigation": {
+          "observations": 186.04078300000037,
+          "plans": 193.864466,
+          "assessments": 152.60959000000003,
+          "calendar": 193.64474299999983,
+          "history": 199.24576500000012,
+          "overview": 209.72046
+        }
+      },
+      {
+        "dashboard_ms": 1680.8319760000004,
+        "dashboard_messages": 4,
+        "js_bytes": 96977,
+        "scripts": 3,
+        "navigation": {
+          "observations": 186.49832799999967,
+          "plans": 180.6704639999998,
+          "assessments": 202.05037699999957,
+          "calendar": 196.3567720000001,
+          "history": 178.12000999999964,
+          "overview": 206.03142099999968
+        }
+      },
+      {
+        "dashboard_ms": 1710.9798480000009,
+        "dashboard_messages": 4,
+        "js_bytes": 96977,
+        "scripts": 3,
+        "navigation": {
+          "observations": 204.66936300000089,
+          "plans": 205.30409700000018,
+          "assessments": 191.73463300000003,
+          "calendar": 192.47080800000003,
+          "history": 201.14677499999925,
+          "overview": 202.61739599999964
+        }
+      },
+      {
+        "dashboard_ms": 1726.7426699999996,
+        "dashboard_messages": 4,
+        "js_bytes": 96977,
+        "scripts": 3,
+        "navigation": {
+          "observations": 199.4072639999995,
+          "plans": 168.1554789999991,
+          "assessments": 229.74909099999968,
+          "calendar": 183.78491300000132,
+          "history": 183.0008940000007,
+          "overview": 235.03026099999988
+        }
+      },
+      {
+        "dashboard_ms": 1168.2640810000012,
+        "dashboard_messages": 4,
+        "js_bytes": 96977,
+        "scripts": 3,
+        "navigation": {
+          "observations": 194.75412499999948,
+          "plans": 215.94750700000077,
+          "assessments": 184.84512900000118,
+          "calendar": 197.85427700000218,
+          "history": 195.00546199999735,
+          "overview": 202.70177799999874
+        }
+      }
+    ],
+    "median": {
+      "dashboard_ms": 1710.9798480000009,
+      "dashboard_messages": 4,
+      "initial_js_bytes": 96977,
+      "navigation_ms": {
+        "observations": 194.75412499999948,
+        "plans": 193.864466,
+        "assessments": 191.73463300000003,
+        "calendar": 193.64474299999983,
+        "history": 195.00546199999735,
+        "overview": 206.03142099999968
+      }
+    }
+  },
+  "limits": [
+    "No access to production Streamlit Secrets editor; secret values were not read or modified.",
+    "Gemini live-provider call not verified; only synthetic key and mocked provider used.",
+    "Production Neon was not accessed or modified.",
+    "Generated hero is illustrative and reconstructed logo is not a supplied original brand file.",
+    "Full 357-case model suite was not repeated in this UI iteration; original WordPress/domain/calculation files remain byte-identical.",
+    "Automated axe checks do not certify WCAG."
+  ]
+}

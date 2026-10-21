@@ -1,5 +1,6 @@
 /* Session-only Streamlit transport. Every read remains authorized on the server. */
 const pending=new Map(),queue=[],reads=new Map();
+const release=document.currentScript?.dataset.release||'';
 let current=null,loaded=false,lastActor=null,scheduled=false,lastHeight=0,heightFrame=0;
 function send(type,extra={}){window.parent.postMessage({isStreamlitMessage:true,type,...extra},'*');}
 function height(){if(heightFrame)return;heightFrame=requestAnimationFrame(()=>{heightFrame=0;const next=Math.max(800,Math.ceil(document.body.getBoundingClientRect().height));if(next!==lastHeight){lastHeight=next;send('streamlit:setFrameHeight',{height:next});}});}
@@ -44,7 +45,7 @@ window.addEventListener('message',event=>{
   loaded=true;
   if(args.config.selected_site){const url=new URL(location.href);url.searchParams.set('hse_site',args.config.selected_site);history.replaceState(null,'',url);}
   window.HSE_CONFIG={...args.config,api:'streamlit://bridge',assets:new URL('assets/',location.href).href};
-  const script=document.createElement('script');script.type='module';script.src='assets/app.bundle.js';
+  const script=document.createElement('script');script.type='module';script.src='assets/app.bundle.js'+(release?'?v='+encodeURIComponent(release):'');
   script.onerror=()=>{const status=document.querySelector('#hse-platform');status.textContent='Caricamento non riuscito. Ricarica la pagina per riprovare.';status.setAttribute('role','alert');};
   document.body.append(script);new ResizeObserver(height).observe(document.body);
  }
